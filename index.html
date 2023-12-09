@@ -46,7 +46,7 @@
       </header>
 
       <div class="w3-row">
-        <img id="img" src="Map/2-3.JPG" style="width:100%">
+        <img id="img" src="2-3.JPG" style="width:100%">
       </div>
       
       <div class="w3-row w3-margin" >
@@ -141,7 +141,7 @@
           newPosition = positionId;
         }
         document.getElementById(newPosition).innerHTML = newPosition+'<i class="fa fa-male w3-hover-opacity" style="font-size:16px;"></i>';
-        document.getElementById('img').src = "Map/"+newPosition+".JPG";
+        document.getElementById('img').src = newPosition+".JPG";
       }
 
       function preparePosition(line, column) {
