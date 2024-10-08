@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Jogo</title>
+<title>Game</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -22,10 +22,10 @@
 
     <div class="w3-row-padding">
       <div class="w3-col l3 m6 w3-margin-bottom">
-          Jogadas: <p id="contador-jogadas"></p>
+          Plays: <p id="contador-jogadas"></p>
       </div>
       <div class="w3-col l3 m6 w3-margin-bottom">
-          Acertos: <p id="contador-acertos"></p>
+          Hits: <p id="contador-acertos"></p>
       </div>        
     </div>
 
@@ -33,28 +33,28 @@
         <div class="w3-col l3 m6 w3-margin-bottom">
           <div class="w3-display-container">
             <div class="w3-display-topleft w3-black w3-padding">1</div>
-            <img id="1" src="1-1.JPG" style="width:99%; display: none;">
+            <img class="real-image" id="1" src="1-1.JPG" style="width:99%; display: none;">
             <img onclick="showImage(1)" id="1-cover" class="cover-image" src="0-0.PNG" style="width:99%">
           </div>
         </div>
         <div class="w3-col l3 m6 w3-margin-bottom">
           <div class="w3-display-container">
             <div class="w3-display-topleft w3-black w3-padding">2</div>
-            <img id="2" src="1-1.JPG"  style="width:99%; display: none;">
+            <img class="real-image"  id="2" src="1-1.JPG"  style="width:99%; display: none;">
             <img onclick="showImage(2)" id="2-cover" class="cover-image" src="0-0.PNG" style="width:99%">
           </div>
         </div>
         <div class="w3-col l3 m6 w3-margin-bottom">
           <div class="w3-display-container">
             <div class="w3-display-topleft w3-black w3-padding">3</div>
-            <img id="3" src="1-1.JPG"  style="width:99%; display: none;">
+            <img class="real-image" id="3" src="1-1.JPG"  style="width:99%; display: none;">
             <img onclick="showImage(3)" id="3-cover" class="cover-image" src="0-0.PNG" style="width:99%">
           </div>
         </div>
         <div class="w3-col l3 m6 w3-margin-bottom">
           <div class="w3-display-container">
             <div class="w3-display-topleft w3-black w3-padding">4</div>
-            <img id="4" src="1-1.JPG"  style="width:99%; display: none;">
+            <img class="real-image" id="4" src="1-1.JPG"  style="width:99%; display: none;">
             <img onclick="showImage(4)" id="4-cover" class="cover-image" src="0-0.PNG" style="width:99%">
           </div>
         </div>
@@ -64,28 +64,28 @@
         <div class="w3-col l3 m6 w3-margin-bottom">
           <div class="w3-display-container">
             <div class="w3-display-topleft w3-black w3-padding">5</div>
-            <img id="5" src="1-1.JPG"  style="width:99%; display: none;">
+            <img class="real-image" id="5" src="1-1.JPG"  style="width:99%; display: none;">
             <img onclick="showImage(5)" id="5-cover" class="cover-image" src="0-0.PNG" style="width:99%">
           </div>
         </div>
         <div class="w3-col l3 m6 w3-margin-bottom">
           <div class="w3-display-container">
             <div class="w3-display-topleft w3-black w3-padding">6</div>
-            <img id="6" src="1-1.JPG"  style="width:99%; display: none;">
+            <img class="real-image" id="6" src="1-1.JPG"  style="width:99%; display: none;">
             <img onclick="showImage(6)" id="6-cover" class="cover-image" src="0-0.PNG" style="width:99%">
           </div>
         </div>
         <div class="w3-col l3 m6 w3-margin-bottom">
           <div class="w3-display-container">
             <div class="w3-display-topleft w3-black w3-padding">7</div>
-            <img id="7" src="1-1.JPG"  style="width:99%; display: none;">
+            <img class="real-image" id="7" src="1-1.JPG"  style="width:99%; display: none;">
             <img onclick="showImage(7)" id="7-cover" class="cover-image" src="0-0.PNG" style="width:99%">
           </div>
         </div>
         <div class="w3-col l3 m6 w3-margin-bottom">
           <div class="w3-display-container">
             <div class="w3-display-topleft w3-black w3-padding">8</div>
-            <img id="8" src="1-1.JPG"  style="width:99%; display: none;">
+            <img class="real-image" id="8" src="1-1.JPG"  style="width:99%; display: none;">
             <img onclick="showImage(8)" id="8-cover" class="cover-image" src="0-0.PNG" style="width:99%">
           </div>
         </div>
@@ -94,28 +94,28 @@
             <div class="w3-col l3 m6 w3-margin-bottom">
               <div class="w3-display-container">
                 <div class="w3-display-topleft w3-black w3-padding">9</div>
-                <img id="9" src="1-1.JPG"  style="width:99%; display: none;">
+                <img class="real-image" id="9" src="1-1.JPG"  style="width:99%; display: none;">
                 <img onclick="showImage(9)" id="9-cover" class="cover-image" src="0-0.PNG" style="width:99%">
               </div>
             </div>
             <div class="w3-col l3 m6 w3-margin-bottom">
               <div class="w3-display-container">
                 <div class="w3-display-topleft w3-black w3-padding">10</div>
-                <img id="10" src="1-1.JPG"  style="width:99%; display: none;">
+                <img class="real-image" id="10" src="1-1.JPG"  style="width:99%; display: none;">
                 <img onclick="showImage(10)" id="10-cover" class="cover-image" src="0-0.PNG" style="width:99%">
               </div>
             </div>
             <div class="w3-col l3 m6 w3-margin-bottom">
               <div class="w3-display-container">
                 <div class="w3-display-topleft w3-black w3-padding">11</div>
-                <img id="11" src="1-1.JPG"  style="width:99%; display: none;">
+                <img class="real-image" id="11" src="1-1.JPG"  style="width:99%; display: none;">
                 <img onclick="showImage(11)" id="11-cover" class="cover-image" src="0-0.PNG" style="width:99%">
               </div>
             </div>
             <div class="w3-col l3 m6 w3-margin-bottom">
               <div class="w3-display-container">
                 <div class="w3-display-topleft w3-black w3-padding">12</div>
-                <img id="12" src="1-1.JPG"  style="width:99%; display: none;">
+                <img class="real-image" id="12" src="1-1.JPG"  style="width:99%; display: none;">
                 <img onclick="showImage(12)" id="12-cover" class="cover-image" src="0-0.PNG" style="width:99%">
               </div>
         </div>
@@ -124,28 +124,28 @@
             <div class="w3-col l3 m6 w3-margin-bottom">
               <div class="w3-display-container">
                 <div class="w3-display-topleft w3-black w3-padding">13</div>
-                <img id="13" src="1-1.JPG" style="width:99%; display: none;">
+                <img class="real-image" id="13" src="1-1.JPG" style="width:99%; display: none;">
                 <img onclick="showImage(13)" id="13-cover" class="cover-image" src="0-0.PNG" style="width:99%">
               </div>
             </div>
             <div class="w3-col l3 m6 w3-margin-bottom">
               <div class="w3-display-container">
                 <div class="w3-display-topleft w3-black w3-padding">14</div>
-                <img id="14" src="1-1.JPG"  style="width:99%; display: none;">
+                <img class="real-image" id="14" src="1-1.JPG"  style="width:99%; display: none;">
                 <img onclick="showImage(14)" id="14-cover" class="cover-image" src="0-0.PNG" style="width:99%">
               </div>
             </div>
             <div class="w3-col l3 m6 w3-margin-bottom">
               <div class="w3-display-container">
                 <div class="w3-display-topleft w3-black w3-padding">15</div>
-                <img id="15"  src="1-1.JPG"  style="width:99%; display: none;">
+                <img class="real-image" id="15"  src="1-1.JPG"  style="width:99%; display: none;">
                 <img onclick="showImage(15)" id="15-cover" class="cover-image" src="0-0.PNG" style="width:99%">
               </div>
             </div>
             <div class="w3-col l3 m6 w3-margin-bottom">
               <div class="w3-display-container">
                 <div class="w3-display-topleft w3-black w3-padding">16</div>
-                <img id="16" src="1-1.JPG"  style="width:99%; display: none;">
+                <img class="real-image" id="16" src="1-1.JPG"  style="width:99%; display: none;">
                 <img onclick="showImage(16)" id="16-cover" class="cover-image" src="0-0.PNG" style="width:99%">
               </div>
         </div>
@@ -194,11 +194,9 @@
           posicoesUsadas.length < 16
           || indicesJausados.length < 8
         ) {
-          alert('Não foi possível montar o jogo, a página será recarregada.');
+          alert('Unable to mount game, page will be reloaded.');
           location.reload()
         }
-
-        console.log(contador1,contador2);
 
         let memoria = [];
         for (count = 0; count < 8; count++) {
@@ -216,6 +214,14 @@
           document.getElementById(memoria[count][2]).src = memoria[count][0] + '.JPG';
         }
 
+        let coverImages = document.getElementsByClassName("cover-image");
+        let realImages =  document.getElementsByClassName("real-image");
+        for (let i = 0; i < coverImages.length; i++) {
+          coverImages[i].style.display = 'none';
+          realImages[i].style.display = '';
+        }
+        setTimeout(amostragemInicial, 6000);
+
         function showImage(image) {
           if (jogada.length >= 2) {
             return;
@@ -223,15 +229,13 @@
 
           document.getElementById(image + "-cover").style.display = 'none';
           document.getElementById(image).style.display = '';
-          console.log(document.getElementById(image).src);
-          console.log('teste');
+
           jogada.push([ 
             document.getElementById(image).src,
             image
           ]);
 
           if (jogada.length >= 2) {
-            console.log(jogada,jogada[0][0],jogada[1][0]);
             if (jogada[0][0] == jogada[1][0]) {
               acertos++;
               jogada = [];
@@ -245,7 +249,7 @@
           document.getElementById('contador-acertos').textContent = acertos;
 
           if (acertos >= 8) {
-            alert('Acabou!! Em:'+jogadas+' jogadas');
+            alert('Game Over!! '+jogadas+' plays');
           }
         }
 
@@ -255,6 +259,15 @@
           document.getElementById(jogada[1][1] + "-cover").style.display = '';
           document.getElementById(jogada[1][1]).style.display = 'none';
           jogada = [];
+        }
+
+        function amostragemInicial() {
+          let coverImages = document.getElementsByClassName("cover-image");
+          let realImages =  document.getElementsByClassName("real-image");
+          for (let i = 0; i < coverImages.length; i++) {
+            coverImages[i].style.display = '';
+            realImages[i].style.display = 'none';
+          }
         }
     </script>
 
