@@ -83,11 +83,20 @@
               <td id="4-4" class="land" >4-4</td>
             </tr>
           </table>
-          <div >
+          <div>
             <button onclick="walk(event,this.id)" id="left" class="w3-button w3-white"><i class="fa fa-arrow-left"></i></button>
             <button onclick="walk(event,this.id)" id="right" class="w3-button w3-white"><i class="fa fa-arrow-right"></i></button>
             <button onclick="walk(event,this.id)" id="up" class="w3-button w3-white"><i class="fa fa-arrow-up"></i></button>
             <button onclick="walk(event,this.id)" id="down" class="w3-button w3-white"><i class="fa fa-arrow-down"></i></button>
+          </div>
+          <div id="battle_actions">
+            <h3>Battle Actions</h3>
+            <button id="knife" class="w3-button w3-white">Knife</button>
+            <button id="trident" class="w3-button w3-white">Trident</button>
+            <button id="hammer" class="w3-button w3-white">Hammer</button>
+            <button id="torch" class="w3-button w3-white">Torch</button>
+            <button id="run" class="w3-button w3-white">Run</button>
+            <button id="potion" class="w3-button w3-white">Potion</button>
           </div>
         </div>
         <div class="w3-col m4 l8" style="overflow-y: auto;min-height: 200px;max-height: 400px;">
@@ -104,8 +113,8 @@
             <td style="background-color: blue;">Magic</td>
           </tr>
           <tr>
-            <td style="background-color: red;">100</td>
-            <td style="background-color: blue;">100</td>
+            <td id="life" style="background-color: red;">100</td>
+            <td id="mana" style="background-color: blue;">100</td>
           </tr>
          
         </table>
@@ -131,7 +140,7 @@
 
       function walk(event,id = null) {
         if (battle == true) {
-          console.log('Não é possível andar durante a batalha');
+          console.log('It´s not possible walk in the battle');
         }
 
         let positionId = preparePosition(position[0],position[1]);
@@ -210,7 +219,7 @@
           weakness: "water",
           hp: "100",
           mp: "100",
-          atack: "10",
+          atack: "7",
           defense: "7",
           special: {
             magic: {
@@ -225,7 +234,7 @@
           name: "Player",
           hp: "100",
           mp: "100",
-          atack: "15",
+          atack: "10",
           defense: "12",
           special: {
             magic: {
@@ -275,6 +284,7 @@
               document.getElementById('description').innerHTML += '<br> monster  atack:'+atack;
               document.getElementById('description').innerHTML += '<br> hp player:'+player.hp;
               turn = 'player';
+              document.getElementById('life').innerHTML = player.hp  ;
               if (player.hp <= 0) {
                 battle = false;
                 document.getElementById('description').innerHTML += '<br> GAME OVER';
