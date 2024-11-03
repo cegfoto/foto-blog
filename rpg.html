@@ -59,47 +59,47 @@
         <div class="w3-col m4 l3">
           <table>
             <tr>
-              <td id="1-1" class="water" >1-1</td>
-              <td id="1-2" class="water" >1-2</td>
+              <td id="1-1" class="water">1-1</td>
+              <td id="1-2" class="water">1-2</td>
               <td id="1-3" class="forest" >1-3</td>
               <td id="1-4" class="forest" >1-4</td>
             </tr>
             <tr>
-              <td id="2-1" class="water" >2-1</td>
-              <td id="2-2" class="water" >2-2</td>
-              <td id="2-3" class="forest" >2-3<i class="fa fa-male w3-hover-opacity" style='font-size:16px;'></i></td>
-              <td id="2-4" class="forest" >2-4</td>
+              <td id="2-1" class="water">2-1</td>
+              <td id="2-2" class="water">2-2</td>
+              <td id="2-3" class="forest">2-3<i class="fa fa-male w3-hover-opacity" style='font-size:16px;'></i></td>
+              <td id="2-4" class="forest">2-4</td>
             </tr>
             <tr>
-              <td id="3-1" class="desert" >3-1</td>
-              <td id="3-2" class="desert" >3-2</td>
-              <td id="3-3" class="land" >3-3</td>
-              <td id="3-4" class="land" >3-4</td>
+              <td id="3-1" class="desert">3-1</td>
+              <td id="3-2" class="desert">3-2</td>
+              <td id="3-3" class="land">3-3</td>
+              <td id="3-4" class="land">3-4</td>
             </tr>
             <tr>
-              <td id="4-1" class="desert" >4-1</td>
-              <td id="4-2" class="desert" >4-2</td>
-              <td id="4-3" class="land" >4-3</td>
-              <td id="4-4" class="land" >4-4</td>
+              <td id="4-1" class="desert">4-1</td>
+              <td id="4-2" class="desert">4-2</td>
+              <td id="4-3" class="land">4-3</td>
+              <td id="4-4" class="land">4-4</td>
             </tr>
           </table>
           <div>
-            <button onclick="walk(event,this.id)" id="left" class="w3-button w3-white"><i class="fa fa-arrow-left"></i></button>
-            <button onclick="walk(event,this.id)" id="right" class="w3-button w3-white"><i class="fa fa-arrow-right"></i></button>
-            <button onclick="walk(event,this.id)" id="up" class="w3-button w3-white"><i class="fa fa-arrow-up"></i></button>
-            <button onclick="walk(event,this.id)" id="down" class="w3-button w3-white"><i class="fa fa-arrow-down"></i></button>
+            <button onclick="walk(event, this.id)" id="left" class="w3-button w3-white"><i class="fa fa-arrow-left"></i></button>
+            <button onclick="walk(event, this.id)" id="right" class="w3-button w3-white"><i class="fa fa-arrow-right"></i></button>
+            <button onclick="walk(event, this.id)" id="up" class="w3-button w3-white"><i class="fa fa-arrow-up"></i></button>
+            <button onclick="walk(event, this.id)" id="down" class="w3-button w3-white"><i class="fa fa-arrow-down"></i></button>
           </div>
           <div id="battle_actions">
             <h3>Battle Actions</h3>
-            <button id="knife" class="w3-button w3-white">Knife</button>
-            <button id="trident" class="w3-button w3-white">Trident</button>
-            <button id="hammer" class="w3-button w3-white">Hammer</button>
-            <button id="torch" class="w3-button w3-white">Torch</button>
-            <button id="run" class="w3-button w3-white">Run</button>
-            <button id="potion" class="w3-button w3-white">Potion</button>
+            <button onclick="battleAction(event, this.id)" id="knife" class="w3-button w3-white">Knife</button>
+            <button onclick="battleAction(event, this.id)" id="trident" class="w3-button w3-white">Trident</button>
+            <button onclick="battleAction(event, this.id)" id="hammer" class="w3-button w3-white">Hammer</button>
+            <button onclick="battleAction(event, this.id)" id="torch" class="w3-button w3-white">Torch</button>
+            <button onclick="battleAction(event, this.id)" id="run" class="w3-button w3-white">Run</button>
+            <button onclick="battleAction(event, this.id)" id="potion" class="w3-button w3-white">Potion</button>
           </div>
         </div>
-        <div class="w3-col m4 l8" style="overflow-y: auto;min-height: 200px;max-height: 400px;">
+        <div class="w3-col m4 l8" id="div-description" style="overflow-y: auto;min-height: 200px;max-height: 400px;">
           <p id="description">
             Start Game:
           </p>
@@ -110,11 +110,11 @@
         <table>
           <tr>
             <td style="background-color: red;">Life</td>
-            <td style="background-color: blue;">Magic</td>
+            <td style="background-color: green;">Coin</td>
           </tr>
           <tr>
             <td id="life" style="background-color: red;">100</td>
-            <td id="mana" style="background-color: blue;">100</td>
+            <td id="mana" style="background-color: green;">100</td>
           </tr>
          
         </table>
@@ -137,10 +137,14 @@
     <script>
       let position = [2,3];
       let battle = false;
+      let foundMonster = null;
+      let turn = null;
 
       function walk(event,id = null) {
         if (battle == true) {
-          console.log('It´s not possible walk in the battle');
+          document.getElementById('description').innerHTML += '<br> It´s not possible walk in the battle.';
+          scrolDown();
+          return;
         }
 
         let positionId = preparePosition(position[0],position[1]);
@@ -180,6 +184,7 @@
           newPosition = positionId;
         }
         document.getElementById(newPosition).innerHTML = newPosition+'<i class="fa fa-male w3-hover-opacity" style="font-size:16px;"></i>';
+        scrolDown();
       }
 
       function preparePosition(line, column) {
@@ -244,12 +249,12 @@
             }
           }
       };
+
       //Criar 2 tipos de monstros para cada território e 2 para todos
 
       function verifyLocation(line, column) {
         let position = preparePosition(line, column);
         let ocurrency = 'monster';
-        battle = true;
         console.log(position,'TESTE2');
         // Verificar em qual localização o rapaz está
         if (land.includes(position)) {
@@ -263,12 +268,33 @@
         }
 
         if (ocurrency == 'monster') {
-          let foundMonster = { ...monster };
-          let turn = 'player';
-          let contador = 0;
-          while (battle == true) {
-            if (turn == 'player') {
-              //rolar dado
+          battle = true;
+          foundMonster = { ...monster };
+          turn = 'player';
+          document.getElementById('description').innerHTML += '<br> You found a monster. Take a action to fight.';
+        }
+        //Verifica a localização, se terá um monstro ou outro personagem (curandeiro)
+        //Vai ser de acordo com a localização, se é deserto, floresta, ilha ou planície
+      }
+
+      function battleAction(event, action) {
+        if (!battle) {
+          document.getElementById('description').innerHTML += '<br> You are not in battle.';
+          scrolDown();
+          return;
+        }
+        switch (action) {
+            case 'potion':
+              player.hp = player.hp + 40;
+              if (player.hp > 100) {
+                player.hp = 100;
+              }
+              document.getElementById('description').innerHTML += '<br> hp player:' + player.hp;
+              break;
+            case 'run':
+              document.getElementById('description').innerHTML += '<br> Not implemented yet.';
+              break;   
+            default:
               atack = atackTest(player.atack, foundMonster.defense);
               foundMonster.hp = foundMonster.hp - atack;
               document.getElementById('description').innerHTML += '<br> player atack:'+atack;
@@ -277,28 +303,28 @@
               if (foundMonster.hp <= 0) {
                 battle = false;
                 document.getElementById('description').innerHTML += '<br> PLAYER WINS';
+                scrolDown();
+                return;
               }
-            } else {
-              atack = atackTest(foundMonster.atack, player.defense);
-              player.hp = player.hp - atack;
-              document.getElementById('description').innerHTML += '<br> monster  atack:'+atack;
-              document.getElementById('description').innerHTML += '<br> hp player:'+player.hp;
-              turn = 'player';
-              document.getElementById('life').innerHTML = player.hp  ;
-              if (player.hp <= 0) {
-                battle = false;
-                document.getElementById('description').innerHTML += '<br> GAME OVER';
-              }
-            }
-            contador ++;
-            if (contador >= 100) {
-              battle = false;
-              console.log('passou demais');
-            }
-          }
         }
-        //Verifica a localização, se terá um monstro ou outro personagem (curandeiro)
-        //Vai ser de acordo com a localização, se é deserto, floresta, ilha ou planície
+        atack = atackTest(foundMonster.atack, player.defense);
+        player.hp = player.hp - atack;
+        document.getElementById('description').innerHTML += '<br> monster  atack:' + atack;
+        document.getElementById('description').innerHTML += '<br> hp player:' + player.hp;
+        turn = 'player';
+        document.getElementById('life').innerHTML = player.hp  ;
+        if (player.hp <= 0) {
+          battle = false;
+          document.getElementById('description').innerHTML += '<br> GAME OVER';
+          scrolDown();
+          return;
+        }
+        scrolDown();
+      }
+
+      function scrolDown() {
+        let descriptionDiv = div = document.getElementById("div-description");
+        descriptionDiv.scrollTop += 100;
       }
 
       function atackTest(atackForce, defenseForce) {
