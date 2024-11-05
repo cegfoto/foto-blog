@@ -111,10 +111,12 @@
           <tr>
             <td style="background-color: red;">Life</td>
             <td style="background-color: green;">Coin</td>
+            <td style="background-color: purple;">Potions</td>
           </tr>
           <tr>
             <td id="life" style="background-color: red;">100</td>
-            <td id="mana" style="background-color: green;">100</td>
+            <td id="coin" style="background-color: green;">100</td>
+            <td id="potionStatus" style="background-color: purple;">2</td>
           </tr>
          
         </table>
@@ -139,6 +141,7 @@
       let battle = false;
       let foundMonster = null;
       let turn = null;
+      let potionNumber = 2;
 
       function walk(event,id = null) {
         if (battle == true) {
@@ -285,14 +288,28 @@
         }
         switch (action) {
             case 'potion':
-              player.hp = player.hp + 40;
-              if (player.hp > 100) {
-                player.hp = 100;
+              if(potionNumber) {
+                player.hp = player.hp + 40;
+                if (player.hp > 100) {
+                  player.hp = 100;
+                }
+                potionNumber --;
+                document.getElementById('potionStatus').innerHTML = potionNumber;
+                document.getElementById('description').innerHTML += '<br> hp player:' + player.hp;
+              } else {
+                document.getElementById('description').innerHTML += '<br> You not have a potion.';
               }
-              document.getElementById('description').innerHTML += '<br> hp player:' + player.hp;
               break;
             case 'run':
-              document.getElementById('description').innerHTML += '<br> Not implemented yet.';
+              let running = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+              running = running + 20;
+              document.getElementById('description').innerHTML += '<br> RUN NUMBER .'+running;
+              if (running > monster.hp) {
+                battle = false;
+                walk(null, runDespair());
+              } else {
+                document.getElementById('description').innerHTML += '<br> The monster reach you.';
+              }
               break;   
             default:
               atack = atackTest(player.atack, foundMonster.defense);
@@ -312,7 +329,7 @@
         document.getElementById('description').innerHTML += '<br> monster  atack:' + atack;
         document.getElementById('description').innerHTML += '<br> hp player:' + player.hp;
         turn = 'player';
-        document.getElementById('life').innerHTML = player.hp  ;
+        document.getElementById('life').innerHTML = player.hp;
         if (player.hp <= 0) {
           battle = false;
           document.getElementById('description').innerHTML += '<br> GAME OVER';
@@ -320,6 +337,28 @@
           return;
         }
         scrolDown();
+      }
+
+      function runDespair() {
+        let despair = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
+        let where = 'left';
+        switch (action) {
+          case 1:
+            where = 'left';
+            break;
+          case 2:
+            where = 'right'
+            break;
+          case 3:
+            where = 'up'
+            break;
+          case 4:
+            where = 'down'
+            break;
+          default:
+             'right';
+        }
+        return where;
       }
 
       function scrolDown() {
