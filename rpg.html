@@ -98,6 +98,10 @@
             <button onclick="battleAction(event, this.id)" id="run" class="w3-button w3-white">Run</button>
             <button onclick="battleAction(event, this.id)" id="potion" class="w3-button w3-white">Potion</button>
           </div>
+          <div id="merchant_actions">
+            <h3>Battle Actions</h3>
+            <button onclick="" id="" class="w3-button w3-white">Iniciando</button>
+           
         </div>
         <div class="w3-col m4 l8" id="div-description" style="overflow-y: auto;min-height: 200px;max-height: 400px;">
           <p id="description">
@@ -115,8 +119,8 @@
           </tr>
           <tr>
             <td id="life" style="background-color: red;">100</td>
-            <td id="coin" style="background-color: green;">100</td>
-            <td id="potionStatus" style="background-color: purple;">2</td>
+            <td id="coin" style="background-color: green;">0</td>
+            <td id="potionStatus" style="background-color: purple;">0</td>
           </tr>
          
         </table>
@@ -141,7 +145,8 @@
       let battle = false;
       let foundMonster = null;
       let turn = null;
-      let potionNumber = 2;
+      let potionNumber = 0;
+      let coinNumber = 0;
 
       function walk(event,id = null) {
         if (battle == true) {
@@ -257,8 +262,7 @@
 
       function verifyLocation(line, column) {
         let position = preparePosition(line, column);
-        let ocurrency = 'monster';
-        console.log(position,'TESTE2');
+
         // Verificar em qual localização o rapaz está
         if (land.includes(position)) {
           document.getElementById('description').innerHTML += '<br> You are in a land space.';
@@ -270,15 +274,29 @@
           document.getElementById('description').innerHTML += '<br> You are in a forest space.';
         }
 
+        let ocurrency = defyneOcurrency();
         if (ocurrency == 'monster') {
           battle = true;
           foundMonster = { ...monster };
           turn = 'player';
           document.getElementById('description').innerHTML += '<br> You found a monster. Take a action to fight.';
+        } else if (ocurrency == 'merchant') {
+          //PAROU AQUI, AÇÕES DE MERCADOR
         }
         //Verifica a localização, se terá um monstro ou outro personagem (curandeiro)
         //Vai ser de acordo com a localização, se é deserto, floresta, ilha ou planície
       }
+
+      function defyneOcurrency() {
+        let sortNumber = Math.floor(Math.random() * 100 ) + 1;
+        if (sortNumber <= 40) {
+          return 'monster';
+        } else if (sortNumber > 40 &&  sortNumber <=60) {
+          return 'merchant';
+        } else {
+          return 'nothing';
+        }
+      } 
 
       function battleAction(event, action) {
         if (!battle) {
@@ -307,6 +325,7 @@
               if (running > monster.hp) {
                 battle = false;
                 walk(null, runDespair());
+                return;
               } else {
                 document.getElementById('description').innerHTML += '<br> The monster reach you.';
               }
@@ -321,6 +340,8 @@
                 battle = false;
                 document.getElementById('description').innerHTML += '<br> PLAYER WINS';
                 scrolDown();
+                coinNumber = coinNumber + 20;
+                document.getElementById('coin').innerHTML = coinNumber;
                 return;
               }
         }
