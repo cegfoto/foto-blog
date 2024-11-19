@@ -92,22 +92,27 @@
           <div id="battle_actions">
             <h3>Battle Actions</h3>
             <button onclick="battleAction(event, this.id)" id="knife" class="w3-button w3-white">Knife</button>
-            <button onclick="battleAction(event, this.id)" id="trident" class="w3-button w3-white">Trident</button>
-            <button onclick="battleAction(event, this.id)" id="hammer" class="w3-button w3-white">Hammer</button>
-            <button onclick="battleAction(event, this.id)" id="torch" class="w3-button w3-white">Torch</button>
+            <button disabled onclick="battleAction(event, this.id)" id="trident" class="w3-button w3-white">Trident</button>
+            <button disabled onclick="battleAction(event, this.id)" id="hammer" class="w3-button w3-white">Hammer</button>
+            <button disabled onclick="battleAction(event, this.id)" id="torch" class="w3-button w3-white">Torch</button>
             <button onclick="battleAction(event, this.id)" id="run" class="w3-button w3-white">Run</button>
             <button onclick="battleAction(event, this.id)" id="potion" class="w3-button w3-white">Potion</button>
           </div>
           <div id="merchant_actions">
-            <h3>Battle Actions</h3>
-            <button onclick="" id="" class="w3-button w3-white">Iniciando</button>
-           
+            <h3>Merchant Actions</h3>
+            <button onclick="buyAction(event, this.id, 50)" id="buyPainKiller" class="w3-button w3-white">PainKiller $50</button>
+            <button onclick="buyAction(event, this.id, 60)" id="buyPotion" class="w3-button w3-white">Potion $60</button>
+            <button onclick="buyAction(event, this.id, 100)" id="buyTrident" class="w3-button w3-white">Trident $100</button>
+            <button onclick="buyAction(event, this.id, 100)" id="buyTorch" class="w3-button w3-white">Torch $100</button>
+            <button onclick="buyAction(event, this.id, 100)" id="buyHammer" class="w3-button w3-white">Hammer $100</button>
+          </div>
+
         </div>
         <div class="w3-col m4 l8" id="div-description" style="overflow-y: auto;min-height: 200px;max-height: 400px;">
           <p id="description">
             Start Game:
           </p>
-         </div>
+        </div>
       </div>
       <div class="w3-row w3-margin" >
         <h3>Player Status</h3>
@@ -143,12 +148,18 @@
     <script>
       let position = [2,3];
       let battle = false;
+      let buy = false;
       let foundMonster = null;
       let turn = null;
       let potionNumber = 0;
       let coinNumber = 0;
+      let torch = false;
+      let hammer = false;
+      let trident = false;
+      let locationStatus = 'land';
 
       function walk(event,id = null) {
+        buy = false;
         if (battle == true) {
           document.getElementById('description').innerHTML += '<br> It´s not possible walk in the battle.';
           scrolDown();
@@ -232,7 +243,7 @@
           weakness: "water",
           hp: "100",
           mp: "100",
-          atack: "7",
+          atack: "5",
           defense: "7",
           special: {
             magic: {
@@ -265,23 +276,29 @@
 
         // Verificar em qual localização o rapaz está
         if (land.includes(position)) {
+          locationStatus = 'land';
           document.getElementById('description').innerHTML += '<br> You are in a land space.';
         } else if(island.includes(position)) {
+          locationStatus = 'island';
           document.getElementById('description').innerHTML += '<br> You are in a island space.';
         } else if(desert.includes(position)) {
+          locationStatus = 'desert';
           document.getElementById('description').innerHTML += '<br> You are in a desert space.';
         } else if(forest.includes(position)) {
+          locationStatus = 'forest';
           document.getElementById('description').innerHTML += '<br> You are in a forest space.';
         }
 
         let ocurrency = defyneOcurrency();
+
         if (ocurrency == 'monster') {
           battle = true;
           foundMonster = { ...monster };
           turn = 'player';
           document.getElementById('description').innerHTML += '<br> You found a monster. Take a action to fight.';
         } else if (ocurrency == 'merchant') {
-          //PAROU AQUI, AÇÕES DE MERCADOR
+          buy = true;
+          document.getElementById('description').innerHTML += '<br> You found a merchant. Buy something, or walk alway.';
         }
         //Verifica a localização, se terá um monstro ou outro personagem (curandeiro)
         //Vai ser de acordo com a localização, se é deserto, floresta, ilha ou planície
@@ -294,9 +311,51 @@
         } else if (sortNumber > 40 &&  sortNumber <=60) {
           return 'merchant';
         } else {
+          coinNumber = coinNumber + 50;
+          document.getElementById('coin').innerHTML = coinNumber;
           return 'nothing';
         }
-      } 
+      }
+
+      function buyAction(event, action, price) {
+        if (!buy) {
+          document.getElementById('description').innerHTML += '<br> You are not with a merchant.';
+          scrolDown();
+          return;
+        }
+
+        if (coinNumber < price) { 
+          document.getElementById('description').innerHTML += '<br> Not have enough money, stranger.';
+          scrolDown();
+          return;
+        }
+
+        coinNumber = coinNumber - price;
+        document.getElementById('coin').innerHTML = coinNumber;
+
+        switch (action) { 
+          case 'buyPainKiller':
+            player.hp = 100;
+            document.getElementById('life').innerHTML = player.hp;
+            break;
+          case 'buyPotion':
+            potionNumber = potionNumber + 1;
+            document.getElementById('potionStatus').innerHTML = potionNumber;
+            break;
+          case 'buyTrident':
+            document.getElementById('trident').removeAttribute("disabled");
+            trident = true;
+            break;
+          case 'buyTorch':
+            document.getElementById('hammer').removeAttribute("disabled");
+            torch = true;
+            break;
+          case 'buyHammer':
+            document.getElementById('torch').removeAttribute("disabled");
+            hammer = true;
+            break;
+        }
+      }
 
       function battleAction(event, action) {
         if (!battle) {
@@ -331,7 +390,8 @@
               }
               break;   
             default:
-              atack = atackTest(player.atack, foundMonster.defense);
+              let bonus = verifySpaceAndWeapon(action, locationStatus);
+              atack = atackTest(player.atack, foundMonster.defense, bonus);
               foundMonster.hp = foundMonster.hp - atack;
               document.getElementById('description').innerHTML += '<br> player atack:'+atack;
               document.getElementById('description').innerHTML += '<br> hp monster:'+foundMonster.hp;
@@ -340,12 +400,12 @@
                 battle = false;
                 document.getElementById('description').innerHTML += '<br> PLAYER WINS';
                 scrolDown();
-                coinNumber = coinNumber + 20;
+                coinNumber = coinNumber + 50;
                 document.getElementById('coin').innerHTML = coinNumber;
                 return;
               }
         }
-        atack = atackTest(foundMonster.atack, player.defense);
+        atack = atackTest(foundMonster.atack, player.defense, 0);
         player.hp = player.hp - atack;
         document.getElementById('description').innerHTML += '<br> monster  atack:' + atack;
         document.getElementById('description').innerHTML += '<br> hp player:' + player.hp;
@@ -355,9 +415,22 @@
           battle = false;
           document.getElementById('description').innerHTML += '<br> GAME OVER';
           scrolDown();
+          coinNumber = coinNumber -25;
+          document.getElementById('coin').innerHTML = coinNumber;
           return;
         }
         scrolDown();
+      }
+
+      function verifySpaceAndWeapon(weapon, space) {
+        if (weapon == 'trident' && space == 'island') {
+          return 3;
+        } else if (weapon == 'hammer' && space == 'desert') {
+          return 4;
+        } else if (weapon == 'torch' && space == 'forest') {
+          return 5;
+        }
+        return 0;
       }
 
       function runDespair() {
@@ -387,11 +460,11 @@
         descriptionDiv.scrollTop += 100;
       }
 
-      function atackTest(atackForce, defenseForce) {
+      function atackTest(atackForce, defenseForce, bonus) {
         dice = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
-        if (dice >=  defenseForce) {
-          atack = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-          atack = atack*atackForce;
+        if ((dice + bonus) >=  defenseForce) {
+          atack = (Math.floor(Math.random() * (6 - 1 + 1)) + 1) + bonus;
+          atack = atack * atackForce;
         } else {
           atack = 0;
         }
