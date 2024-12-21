@@ -100,11 +100,12 @@
           </div>
           <div id="merchant_actions">
             <h3>Merchant Actions</h3>
-            <button onclick="buyAction(event, this.id, 50)" id="buyPainKiller" class="w3-button w3-white">PainKiller $50</button>
-            <button onclick="buyAction(event, this.id, 60)" id="buyPotion" class="w3-button w3-white">Potion $60</button>
-            <button onclick="buyAction(event, this.id, 100)" id="buyTrident" class="w3-button w3-white">Trident $100</button>
-            <button onclick="buyAction(event, this.id, 100)" id="buyTorch" class="w3-button w3-white">Torch $100</button>
-            <button onclick="buyAction(event, this.id, 100)" id="buyHammer" class="w3-button w3-white">Hammer $100</button>
+            <button disabled onclick="buyAction(event, this.id, 50)" id="buyPainKiller" class="w3-button w3-white merchantAction">PainKiller $50</button>
+            <button disabled onclick="buyAction(event, this.id, 60)" id="buyPotion" class="w3-button w3-white merchantAction">Potion $60</button>
+            <button disabled onclick="buyAction(event, this.id, 100)" id="buyTrident" class="w3-button w3-white merchantAction">Trident $100</button>
+            <button disabled onclick="buyAction(event, this.id, 100)" id="buyTorch" class="w3-button w3-white merchantAction">Torch $100</button>
+            <button disabled onclick="buyAction(event, this.id, 100)" id="buyHammer" class="w3-button w3-white merchantAction">Hammer $100</button>
+            <button disabled onclick="buyAction(event, this.id, 1000)" id="getAway" class="w3-button w3-white merchantAction">Get Away $1000</button>
           </div>
 
         </div>
@@ -160,6 +161,12 @@
 
       function walk(event,id = null) {
         buy = false;
+
+        elementos = document.getElementsByClassName("merchantAction");
+        for (let i = 0; i < elementos.length; i++) {
+          elementos[i].setAttribute('disabled', 'disabled');
+        }
+
         if (battle == true) {
           document.getElementById('description').innerHTML += '<br> It´s not possible walk in the battle.';
           scrolDown();
@@ -196,7 +203,7 @@
             }
             break;
         }
-        newPosition = preparePosition(position[0],position[1]);
+        newPosition = preparePosition(position[0], position[1]);
         verifyLocation(position[0], position[1]);
 
         if(newPosition == '0') {
@@ -298,6 +305,10 @@
           document.getElementById('description').innerHTML += '<br> You found a monster. Take a action to fight.';
         } else if (ocurrency == 'merchant') {
           buy = true;
+          elementos = document.getElementsByClassName("merchantAction");
+          for (let i = 0; i < elementos.length; i++) {
+            elementos[i].removeAttribute('disabled');
+          }
           document.getElementById('description').innerHTML += '<br> You found a merchant. Buy something, or walk alway.';
         }
         //Verifica a localização, se terá um monstro ou outro personagem (curandeiro)
@@ -308,10 +319,10 @@
         let sortNumber = Math.floor(Math.random() * 100 ) + 1;
         if (sortNumber <= 40) {
           return 'monster';
-        } else if (sortNumber > 40 &&  sortNumber <=60) {
+        } else if (sortNumber > 40 &&  sortNumber <=70) {
           return 'merchant';
         } else {
-          coinNumber = coinNumber + 50;
+          coinNumber = coinNumber + 10;
           document.getElementById('coin').innerHTML = coinNumber;
           return 'nothing';
         }
@@ -347,12 +358,16 @@
             trident = true;
             break;
           case 'buyTorch':
-            document.getElementById('hammer').removeAttribute("disabled");
+            document.getElementById('torch').removeAttribute("disabled");
             torch = true;
             break;
           case 'buyHammer':
-            document.getElementById('torch').removeAttribute("disabled");
+            document.getElementById('hammer').removeAttribute("disabled");
             hammer = true;
+            break;
+          case 'getAway':
+            alert('You Win!!');
+            location.reload();
             break;
         }
       }
@@ -379,7 +394,7 @@
               break;
             case 'run':
               let running = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
-              running = running + 20;
+              running = running + 50;
               document.getElementById('description').innerHTML += '<br> RUN NUMBER .'+running;
               if (running > monster.hp) {
                 battle = false;
@@ -391,6 +406,9 @@
               break;   
             default:
               let bonus = verifySpaceAndWeapon(action, locationStatus);
+              if(bonus > 0) {
+                document.getElementById('description').innerHTML += '<br> weapon bonus!!!';
+              }
               atack = atackTest(player.atack, foundMonster.defense, bonus);
               foundMonster.hp = foundMonster.hp - atack;
               document.getElementById('description').innerHTML += '<br> player atack:'+atack;
@@ -413,9 +431,9 @@
         document.getElementById('life').innerHTML = player.hp;
         if (player.hp <= 0) {
           battle = false;
-          document.getElementById('description').innerHTML += '<br> GAME OVER';
+          document.getElementById('description').innerHTML += '<br> GAME OVER, you lost 100 coins';
           scrolDown();
-          coinNumber = coinNumber -25;
+          coinNumber = coinNumber -100;
           document.getElementById('coin').innerHTML = coinNumber;
           return;
         }
