@@ -28,7 +28,7 @@
       .black-white {
         background-color: gray;
       }
-      .desert {
+      .montain {
         background-color: yellow;
       }
       .land {
@@ -71,14 +71,14 @@
               <td id="2-4" class="forest">2-4</td>
             </tr>
             <tr>
-              <td id="3-1" class="desert">3-1</td>
-              <td id="3-2" class="desert">3-2</td>
+              <td id="3-1" class="montain">3-1</td>
+              <td id="3-2" class="montain">3-2</td>
               <td id="3-3" class="land">3-3</td>
               <td id="3-4" class="land">3-4</td>
             </tr>
             <tr>
-              <td id="4-1" class="desert">4-1</td>
-              <td id="4-2" class="desert">4-2</td>
+              <td id="4-1" class="montain">4-1</td>
+              <td id="4-2" class="montain">4-2</td>
               <td id="4-3" class="land">4-3</td>
               <td id="4-4" class="land">4-4</td>
             </tr>
@@ -109,8 +109,8 @@
           </div>
 
         </div>
-        <div class="w3-col m4 l8">
-          IMAGEM
+        <div id="land_monster_div" class="w3-col m4 l8">
+          <img style="max-width: 100%" id="land_monster_image" src="Lands/land1.JPG" alt="Descrição da imagem">
         </div>
       </div>
       <div class="w3-row w3-margin" >
@@ -158,7 +158,7 @@
           <h1>Initial Actions</h1>
           <p>Sua vez, utiliza alguma das ações ao lado.</p>
           IMAGEM
-          <p>Existem os botões de movimentação de movimentação, que lle permitirão explorar.</p>
+          <p>Existem os botões de movimentação de movimentação, que lhe permitirão explorar.</p>
           IMAGEM
           <p>Os botões de armas, que lhe permitirão atacar, quando estiver na presença de um inimigo.</p>
           IMAGEM
@@ -282,7 +282,7 @@
         '2-2'
       ];
 
-      const desert = [
+      const montain = [
         '3-1',
         '3-2',
         '4-1',
@@ -329,22 +329,39 @@
 
       //Criar 2 tipos de monstros para cada território e 2 para todos
 
+      const imgElement = document.getElementById('land_monster_image');
+      let sortLand = 'land1.JPG'
+  
+      function alterImage(land, number, monster = false) {
+        sortLand = Math.floor(Math.random() * number) + 1;
+        imgElement.src = 'Lands/'+land+''+sortLand+'.JPG';
+        if (monster) {
+          imgElement.src = 'Monsters/'+land+'.JPG';
+        }
+      }
+
+      //let position = '3-3';
       function verifyLocation(line, column) {
         let position = preparePosition(line, column);
 
         // Verificar em qual localização o rapaz está
+        // id da parte com imagem land_monster_image
         if (land.includes(position)) {
           locationStatus = 'land';
           document.getElementById('description').innerHTML += '<br> You are in a land space.';
+          alterImage(locationStatus, 2);
         } else if (island.includes(position)) {
           locationStatus = 'island';
           document.getElementById('description').innerHTML += '<br> You are in a island space.';
-        } else if (desert.includes(position)) {
-          locationStatus = 'desert';
-          document.getElementById('description').innerHTML += '<br> You are in a desert space.';
+          alterImage(locationStatus, 2);
+        } else if (montain.includes(position)) {
+          locationStatus = 'montain';
+          document.getElementById('description').innerHTML += '<br> You are in a montain space.';
+          alterImage(locationStatus, 7);
         } else if (forest.includes(position)) {
           locationStatus = 'forest';
           document.getElementById('description').innerHTML += '<br> You are in a forest space.';
+          alterImage(locationStatus, 2);
         }
 
         let ocurrency = defyneOcurrency();
@@ -354,6 +371,7 @@
           foundMonster = { ...monster };
           turn = 'player';
           document.getElementById('description').innerHTML += '<br> You found a monster. Take a action to fight.';
+          alterImage(locationStatus, 1, true);
         } else if (ocurrency == 'merchant') {
           buy = true;
           elementos = document.getElementsByClassName("merchantAction");
@@ -364,7 +382,7 @@
           document.getElementById('description').innerHTML += '<br> You found a merchant. Buy something, or walk alway.';
         }
         //Verifica a localização, se terá um monstro ou outro personagem (curandeiro)
-        //Vai ser de acordo com a localização, se é deserto, floresta, ilha ou planície
+        //Vai ser de acordo com a localização, se é montaino, floresta, ilha ou planície
       }
 
       function defyneOcurrency() {
@@ -503,7 +521,7 @@
       function verifySpaceAndWeapon(weapon, space) {
         if (weapon == 'trident' && space == 'island') {
           return 3;
-        } else if (weapon == 'hammer' && space == 'desert') {
+        } else if (weapon == 'hammer' && space == 'montain') {
           return 4;
         } else if (weapon == 'torch' && space == 'forest') {
           return 5;
