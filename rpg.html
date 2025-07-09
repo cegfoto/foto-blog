@@ -57,7 +57,7 @@
       
       <div class="w3-row w3-margin" >
         <div class="w3-col m4 l3">
-          <table>
+          <table hidden>
             <tr>
               <td id="1-1" class="water">1-1</td>
               <td id="1-2" class="water">1-2</td>
@@ -84,6 +84,7 @@
             </tr>
           </table>
           <div>
+            <h3>Movimentação</h3>
             <button onclick="walk(event, this.id)" id="left" class="w3-button w3-white"><i class="fa fa-arrow-left"></i></button>
             <button onclick="walk(event, this.id)" id="right" class="w3-button w3-white"><i class="fa fa-arrow-right"></i></button>
             <button onclick="walk(event, this.id)" id="up" class="w3-button w3-white"><i class="fa fa-arrow-up"></i></button>
@@ -388,9 +389,9 @@
       function defyneOcurrency() {
         let sortNumber = Math.floor(Math.random() * 100 ) + 1;
 
-        if (sortNumber <= 40) {
+        if (sortNumber <= 33) {
           return 'monster';
-        } else if (sortNumber > 40 &&  sortNumber <=70) {
+        } else if (sortNumber > 33 &&  sortNumber <= 66) {
           return 'merchant';
         } else {
           coinNumber = coinNumber + 10;
@@ -495,6 +496,7 @@
               scrolDown();
               coinNumber = coinNumber + 50;
               document.getElementById('coin').innerHTML = coinNumber;
+              alterImage(locationStatus, 1);
               return;
             }
         }
