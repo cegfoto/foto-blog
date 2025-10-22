@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Explorar</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+      body {font-family: "Raleway", Arial, sans-serif}
+      .w3-row img {margin-bottom: -8px}
+      table, th, td {
+        border: 1px solid black;
+      }
+      .forest {
+        background-color: green;
+      }
+      .city {
+        background-color: gray;
+      }
+      .sky {
+        background-color: lightblue;
+      }
+      .water {
+        background-color: blue;
+      }
+      .black-white {
+        background-color: gray;
+      }
+      .montain {
+        background-color: yellow;
+      }
+      .land {
+        background-color: lightgreen;
+      }
+      td {
+        min-width: 50px;
+        min-height: 50px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-content" style="max-width:1500px">
+
+      <!-- Header -->
+      <header class="w3-container w3-xlarge w3-padding-24">
+        <a href="#" class="w3-left w3-button w3-white">RPG</a>
+        <a href="https://cegfoto.github.io/foto-blog/memory" class="w3-left w3-button w3-white">Jogo da Memória</a>
+        <a href="#about" class="w3-right w3-button w3-white">Bancos de Imagem</a>
+      </header>
+
+      <div class="w3-row">
+        Iniciando RPG   
+      </div>
+      
+      <div class="w3-row w3-margin" >
+        <div class="w3-col m4 l3">
+          <table hidden>
+            <tr>
+              <td id="1-1" class="water">1-1</td>
+              <td id="1-2" class="water">1-2</td>
+              <td id="1-3" class="forest" >1-3</td>
+              <td id="1-4" class="forest" >1-4</td>
+            </tr>
+            <tr>
+              <td id="2-1" class="water">2-1</td>
+              <td id="2-2" class="water">2-2</td>
+              <td id="2-3" class="forest">2-3<i class="fa fa-male w3-hover-opacity" style='font-size:16px;'></i></td>
+              <td id="2-4" class="forest">2-4</td>
+            </tr>
+            <tr>
+              <td id="3-1" class="montain">3-1</td>
+              <td id="3-2" class="montain">3-2</td>
+              <td id="3-3" class="land">3-3</td>
+              <td id="3-4" class="land">3-4</td>
+            </tr>
+            <tr>
+              <td id="4-1" class="montain">4-1</td>
+              <td id="4-2" class="montain">4-2</td>
+              <td id="4-3" class="land">4-3</td>
+              <td id="4-4" class="land">4-4</td>
+            </tr>
+          </table>
+          <div>
+            <h3>Movimentação</h3>
+            <button onclick="walk(event, this.id)" id="left" class="w3-button w3-white"><i class="fa fa-arrow-left"></i></button>
+            <button onclick="walk(event, this.id)" id="right" class="w3-button w3-white"><i class="fa fa-arrow-right"></i></button>
+            <button onclick="walk(event, this.id)" id="up" class="w3-button w3-white"><i class="fa fa-arrow-up"></i></button>
+            <button onclick="walk(event, this.id)" id="down" class="w3-button w3-white"><i class="fa fa-arrow-down"></i></button>
+          </div>
+          <div id="battle_actions">
+            <h3>Ações de Batalha</h3>
+            <button onclick="battleAction(event, this.id)" id="knife" class="w3-button w3-white">Faca</button>
+            <button disabled onclick="battleAction(event, this.id)" id="trident" class="w3-button w3-white">Tridente</button>
+            <button disabled onclick="battleAction(event, this.id)" id="hammer" class="w3-button w3-white">Martelo</button>
+            <button disabled onclick="battleAction(event, this.id)" id="torch" class="w3-button w3-white">Tocha</button>
+            <button onclick="battleAction(event, this.id)" id="run" class="w3-button w3-white">Correr</button>
+            <button onclick="battleAction(event, this.id)" id="potion" class="w3-button w3-white">Poção</button>
+          </div>
+          <div id="merchant_actions">
+            <h3>Merchant Actions</h3>
+            <button disabled onclick="buyAction(event, this.id, 50)" id="buyPainKiller" class="w3-button w3-white merchantAction">Analgésico $50</button>
+            <button disabled onclick="buyAction(event, this.id, 60)" id="buyPotion" class="w3-button w3-white merchantAction">Poção $60</button>
+            <button disabled onclick="buyAction(event, this.id, 100)" id="buyTrident" class="w3-button w3-white merchantAction">Tridente $100</button>
+            <button disabled onclick="buyAction(event, this.id, 100)" id="buyTorch" class="w3-button w3-white merchantAction">Tocha $100</button>
+            <button disabled onclick="buyAction(event, this.id, 100)" id="buyHammer" class="w3-button w3-white merchantAction">Martelo $100</button>
+            <button disabled onclick="buyAction(event, this.id, 1000)" id="getAway" class="w3-button w3-white merchantAction">Fulga $1000</button>
+          </div>
+
+        </div>
+        <div id="land_monster_div" class="w3-col m4 l8">
+          <img style="max-width: 100%" id="land_monster_image" src="Lands/land1.JPG" alt="Descrição da imagem">
+        </div>
+      </div>
+      <div class="w3-row w3-margin" >
+        <div class="w3-col m4 l2">
+          <h3>Player Status</h3>
+          <table>
+            <tr>
+              <td style="background-color: red;">Vida</td>
+              <td style="background-color: green;">Dinheiro</td>
+              <td style="background-color: purple;">Poções</td>
+            </tr>
+            <tr>
+              <td id="life" style="background-color: red;">100</td>
+              <td id="coin" style="background-color: green;">0</td>
+              <td id="potionStatus" style="background-color: purple;">0</td>
+            </tr>
+          
+          </table>
+        </div>
+        <div class="w3-col m4 l8" id="div-description" style="overflow-y: auto;min-height: 100px;max-height: 200px;">
+          <p id="description">
+            Start Game:
+          </p>
+        </div>
+      </div>
+      
+    <!-- End Page Content -->
+    </div>
+
+    <!-- Footer / About Section -->
+    <footer class="w3-light-grey w3-padding-64 w3-center" id="about">
+      <h2>Stock Images</h2>
+      <a target="_blank" href="https://www.shutterstock.com/pt/g/Maursk8"><i class="fa fa-shopping-bag w3-hover-opacity" style='font-size:48px;'></i></a>
+      <a target="_blank" href="https://stock.adobe.com/br/contributor/209738965/Mauri"><i class="fa fa-shopping-bag w3-hover-opacity" style='font-size:48px;'></i></a>
+      <h2>Social media</h2>
+      <a target="_blank" href="https://twitter.com/estudofoto"><i class="fa fa-twitter w3-hover-opacity" style='font-size:48px;'></i></a>
+      <a target="_blank" href="https://www.instagram.com/visoesminhas/"><i class="fa fa-instagram w3-hover-opacity" style='font-size:48px;'></i></a>
+      <p><a href="https://cegfoto.github.io/foto-blog/pt-br.html" target="_blank" class="w3-hover-text-green">Pt-Br</a></p>
+    </footer>
+
+    <div id="initialAction" class="w3-modal">
+      <div class="w3-modal-content">
+        <div class="w3-container">
+          <span onclick="document.getElementById('prologue').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+          <h1>Ações Iniciais</h1>
+          <p>Sua vez, utiliza alguma das ações ao lado.</p>
+          IMAGEM
+          <p>Existem os botões de movimentação de movimentação, que lhe permitirão explorar.</p>
+          IMAGEM
+          <p>Os botões de armas, que lhe permitirão atacar, quando estiver na presença de um inimigo.</p>
+          IMAGEM
+          <p>Os botões de mercador, que lhe permitirão comprar itens, quando estiver na presença do mercador</p>
+          IMAGEM
+          <p>Mas esteja atento a sua vida, dinheiro e quantidade de poção.</p>
+          IMAGEM
+        </div>
+        <button onclick="document.getElementById('initialAction').style.display='none'" class="w3-button w3-white">
+          Jogar <i class='fa fa-play'></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="prologue" class="w3-modal">
+      <div class="w3-modal-content">
+        <div class="w3-container">
+          <span onclick="document.getElementById('prologue').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+          <h1>Que o jogo comece</h1>
+          <p>
+            Você está perdido em uma ilha cheia de monstros.
+            No entanto, ele encontrou um estranho mago mercador que lhe ofereceu uma saída.
+            Para isso, você deve pagá-lo com moedas, que caem dos monstros assim que você os derrota.
+            Para se mover pela ilha, use os botões direcionais do lado direito.
+            Mas tenha cuidado, sempre que encontrar um monstro, os botões de armas serão liberados (se você os tiver em seu inventário).
+            Ao encontrar o mercador, você pode comprar poções de cura, armas, curar-se ou sair se tiver moedas suficientes.
+          </p>
+        </div>
+        <button onclick="document.getElementById('prologue').style.display='none'" class="w3-button w3-white">
+          Jogar <i class='fa fa-play'></i>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let position = [2,3];
+      let battle = false;
+      let buy = false;
+      let foundMonster = null;
+      let turn = null;
+      let potionNumber = 0;
+      let coinNumber = 0;
+      let torch = false;
+      let hammer = false;
+      let trident = false;
+      let locationStatus = 'land';
+
+      document.getElementById('initialAction').style.display='block';
+      document.getElementById('prologue').style.display='block';
+
+      function walk(event,id = null) {
+        buy = false;
+
+        elementos = document.getElementsByClassName("merchantAction");
+
+        for (let i = 0; i < elementos.length; i++) {
+          elementos[i].setAttribute('disabled', 'disabled');
+        }
+
+        if (battle == true) {
+          document.getElementById('description').innerHTML += '<br> Não é possível andar durante a batalha.';
+          scrolDown();
+          return;
+        }
+
+        let positionId = preparePosition(position[0],position[1]);
+        document.getElementById(positionId).innerHTML = positionId;
+        let newPosition = 0;
+        
+        if(id != null) {
+          action = id;
+        }
+
+        switch (action) {
+          case 'up':
+            if (position[0] > 1) {
+              position[0] = position[0] - 1;
+            }
+            break;
+          case 'down':
+            if (position[0] < 4) {
+              position[0] = position[0] + 1;
+            }
+            break;
+          case 'left':
+            if (position[1] > 1) {
+              position[1] = position[1] - 1;
+            }
+            break;
+          case 'right':
+            if (position[1] < 4) {
+              position[1] = position[1] + 1;
+            }
+            break;
+        }
+
+        newPosition = preparePosition(position[0], position[1]);
+        verifyLocation(position[0], position[1]);
+
+        if(newPosition == '0') {
+          newPosition = positionId;
+        }
+
+        document.getElementById(newPosition).innerHTML = newPosition+'<i class="fa fa-male w3-hover-opacity" style="font-size:16px;"></i>';
+        scrolDown();
+      }
+
+      function preparePosition(line, column) {
+        return line+"-"+column;
+      }
+
+      const land = [
+        '3-3',
+        '3-4',
+        '4-3',
+        '4-4'
+      ];
+
+      const island = [
+        '1-1',
+        '1-2',
+        '2-1',
+        '2-2'
+      ];
+
+      const montain = [
+        '3-1',
+        '3-2',
+        '4-1',
+        '4-2'
+      ];
+
+      const forest = [
+        '1-3',
+        '1-4',
+        '2-3',
+        '2-4'
+      ];
+
+      let monster = {
+          name: "Monster",
+          weakness: "water",
+          hp: "100",
+          mp: "100",
+          atack: "5",
+          defense: "7",
+          special: {
+            magic: {
+              name:"fire",
+              damage:"10",
+              type:"fire"
+            }
+          }
+      };
+
+      let player = {
+          name: "Player",
+          hp: "100",
+          mp: "100",
+          atack: "10",
+          defense: "12",
+          special: {
+            magic: {
+              name:"fire",
+              damage:"10",
+              type:"fire"
+            }
+          }
+      };
+
+      //Criar 2 tipos de monstros para cada território e 2 para todos
+
+      const imgElement = document.getElementById('land_monster_image');
+      let sortLand = 'land1.JPG'
+  
+      function alterImage(land, number, monster = false) {
+        sortLand = Math.floor(Math.random() * number) + 1;
+        imgElement.src = 'Lands/'+land+''+sortLand+'.JPG';
+        if (monster) {
+          imgElement.src = 'Monsters/'+land+'.JPG';
+        }
+      }
+
+      //let position = '3-3';
+      function verifyLocation(line, column) {
+        let position = preparePosition(line, column);
+
+        // Verificar em qual localização o rapaz está
+        // id da parte com imagem land_monster_image
+        if (land.includes(position)) {
+          locationStatus = 'land';
+          document.getElementById('description').innerHTML += '<br> Você está em uma planície.';
+          alterImage(locationStatus, 2);
+        } else if (island.includes(position)) {
+          locationStatus = 'island';
+          document.getElementById('description').innerHTML += '<br> Você está no litoral.';
+          alterImage(locationStatus, 2);
+        } else if (montain.includes(position)) {
+          locationStatus = 'montain';
+          document.getElementById('description').innerHTML += '<br> Você está na montanha.';
+          alterImage(locationStatus, 7);
+        } else if (forest.includes(position)) {
+          locationStatus = 'forest';
+          document.getElementById('description').innerHTML += '<br> Você está na floresta.';
+          alterImage(locationStatus, 2);
+        }
+
+        let ocurrency = defyneOcurrency();
+
+        if (ocurrency == 'monster') {
+          battle = true;
+          foundMonster = { ...monster };
+          turn = 'player';
+          document.getElementById('description').innerHTML += '<br> Um monstro atacou. Tome uma ação de batalha.';
+          alterImage(locationStatus, 1, true);
+        } else if (ocurrency == 'merchant') {
+          buy = true;
+          elementos = document.getElementsByClassName("merchantAction");
+
+          for (let i = 0; i < elementos.length; i++) {
+            elementos[i].removeAttribute('disabled');
+          }
+          document.getElementById('description').innerHTML += '<br> Você encontrou um mercador. Compre algo ou vá embora.';
+        }
+        //Verifica a localização, se terá um monstro ou outro personagem (curandeiro)
+        //Vai ser de acordo com a localização, se é montaino, floresta, ilha ou planície
+      }
+
+      function defyneOcurrency() {
+        let sortNumber = Math.floor(Math.random() * 100 ) + 1;
+
+        if (sortNumber <= 33) {
+          return 'monster';
+        } else if (sortNumber > 33 &&  sortNumber <= 66) {
+          return 'merchant';
+        } else {
+          coinNumber = coinNumber + 10;
+          document.getElementById('coin').innerHTML = coinNumber;
+          return 'nothing';
+        }
+      }
+
+      function buyAction(event, action, price) {
+        if (!buy) {
+          document.getElementById('description').innerHTML += '<br> Não há um mercador presente.';
+          scrolDown();
+          return;
+        }
+
+        if (coinNumber < price) { 
+          document.getElementById('description').innerHTML += '<br> Não tem dinheiro o suficiente, estranho.';
+          scrolDown();
+          return;
+        }
+
+        coinNumber = coinNumber - price;
+        document.getElementById('coin').innerHTML = coinNumber;
+
+        switch (action) { 
+          case 'buyPainKiller':
+            player.hp = 100;
+            document.getElementById('life').innerHTML = player.hp;
+            break;
+          case 'buyPotion':
+            potionNumber = potionNumber + 1;
+            document.getElementById('potionStatus').innerHTML = potionNumber;
+            break;
+          case 'buyTrident':
+            document.getElementById('trident').removeAttribute("disabled");
+            trident = true;
+            break;
+          case 'buyTorch':
+            document.getElementById('torch').removeAttribute("disabled");
+            torch = true;
+            break;
+          case 'buyHammer':
+            document.getElementById('hammer').removeAttribute("disabled");
+            hammer = true;
+            break;
+          case 'getAway':
+            alert('You Win!!');
+            location.reload();
+            break;
+        }
+      }
+
+      function battleAction(event, action) {
+        if (!battle) {
+          document.getElementById('description').innerHTML += '<br> Você não está em batalha.';
+          scrolDown();
+          return;
+        }
+
+        switch (action) {
+            case 'potion':
+              if(potionNumber) {
+                player.hp = player.hp + 40;
+                if (player.hp > 100) {
+                  player.hp = 100;
+                }
+                potionNumber --;
+                document.getElementById('potionStatus').innerHTML = potionNumber;
+                document.getElementById('description').innerHTML += '<br> hp player:' + player.hp;
+              } else {
+                document.getElementById('description').innerHTML += '<br> Você não tem poção.';
+              }
+              break;
+          case 'run':
+            let running = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+            running = running + 50;
+            document.getElementById('description').innerHTML += '<br> Teste de corrida .'+running;
+            if (running > monster.hp) {
+              battle = false;
+              walk(null, runDespair());
+              return;
+            } else {
+              document.getElementById('description').innerHTML += '<br> O monstro te alcançou.';
+            }
+            break;
+          default:
+            let bonus = verifySpaceAndWeapon(action, locationStatus);
+
+            if(bonus > 0) {
+              document.getElementById('description').innerHTML += '<br> Bônus de arma!!!';
+            }
+
+            atack = atackTest(player.atack, foundMonster.defense, bonus);
+            foundMonster.hp = foundMonster.hp - atack;
+            document.getElementById('description').innerHTML += '<br> ataque do player:'+atack;
+            document.getElementById('description').innerHTML += '<br> hp do monstro:'+foundMonster.hp;
+            turn = 'monster';
+
+            if (foundMonster.hp <= 0) {
+              battle = false;
+              document.getElementById('description').innerHTML += '<br> PLAYER VENCEU';
+              scrolDown();
+              coinNumber = coinNumber + 50;
+              document.getElementById('coin').innerHTML = coinNumber;
+              alterImage(locationStatus, 1);
+              return;
+            }
+        }
+
+        atack = atackTest(foundMonster.atack, player.defense, 0);
+        player.hp = player.hp - atack;
+        document.getElementById('description').innerHTML += '<br> ataque do monstro:' + atack;
+        document.getElementById('description').innerHTML += '<br> hp do player:' + player.hp;
+        turn = 'player';
+        document.getElementById('life').innerHTML = player.hp;
+
+        if (player.hp <= 0) {
+          battle = false;
+          document.getElementById('description').innerHTML += '<br> GAME OVER, você perdeu metade do dinheiro';
+          scrolDown();
+          coinNumber = coinNumber / 2;
+          document.getElementById('coin').innerHTML = coinNumber;
+          return;
+        }
+
+        scrolDown();
+      }
+
+      function verifySpaceAndWeapon(weapon, space) {
+        if (weapon == 'trident' && space == 'island') {
+          return 3;
+        } else if (weapon == 'hammer' && space == 'montain') {
+          return 4;
+        } else if (weapon == 'torch' && space == 'forest') {
+          return 5;
+        }
+
+        return 0;
+      }
+
+      function runDespair() {
+        let despair = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
+        let where = 'left';
+
+        switch (action) {
+          case 1:
+            where = 'left';
+            break;
+          case 2:
+            where = 'right'
+            break;
+          case 3:
+            where = 'up'
+            break;
+          case 4:
+            where = 'down'
+            break;
+          default:
+             'right';
+        }
+
+        return where;
+      }
+
+      function scrolDown() {
+        let descriptionDiv = div = document.getElementById("div-description");
+        descriptionDiv.scrollTop += 100;
+      }
+
+      function atackTest(atackForce, defenseForce, bonus) {
+        dice = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
+
+        if ((dice + bonus) >=  defenseForce) {
+          atack = (Math.floor(Math.random() * (6 - 1 + 1)) + 1) + bonus;
+          atack = atack * atackForce;
+        } else {
+          atack = 0;
+        }
+        
+        return atack;
+      }
+
+    </script>
+  </body>
+</html>
+
