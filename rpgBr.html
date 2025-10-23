@@ -211,10 +211,10 @@
       document.getElementById('initialAction').style.display='block';
       document.getElementById('prologue').style.display='block';
 
-      function walk(event,id = null) {
+      function walk(event, id = null) {
         buy = false;
 
-        elementos = document.getElementsByClassName("merchantAction");
+        let elementos = document.getElementsByClassName("merchantAction");
 
         for (let i = 0; i < elementos.length; i++) {
           elementos[i].setAttribute('disabled', 'disabled');
@@ -230,6 +230,7 @@
         document.getElementById(positionId).innerHTML = positionId;
         let newPosition = 0;
         
+        let action = null;
         if(id != null) {
           action = id;
         }
@@ -333,14 +334,16 @@
 
       //Criar 2 tipos de monstros para cada território e 2 para todos
 
-      const imgElement = document.getElementById('land_monster_image');
+      let imgElement = document.getElementById('land_monster_image');
       let sortLand = 'land1.JPG'
   
-      function alterImage(land, number, monster = false) {
+      function alterImage(land, number, ocurrency = '') {
         sortLand = Math.floor(Math.random() * number) + 1;
         imgElement.src = 'Lands/'+land+''+sortLand+'.JPG';
-        if (monster) {
+        if (ocurrency == 'monster') {
           imgElement.src = 'Monsters/'+land+'.JPG';
+        } else if (ocurrency == 'merchant') {
+          imgElement.src = 'Merchant/Merchant.JPG';
         }
       }
 
@@ -375,7 +378,7 @@
           foundMonster = { ...monster };
           turn = 'player';
           document.getElementById('description').innerHTML += '<br> Um monstro atacou. Tome uma ação de batalha.';
-          alterImage(locationStatus, 1, true);
+          alterImage(locationStatus, 1, ocurrency);
         } else if (ocurrency == 'merchant') {
           buy = true;
           elementos = document.getElementsByClassName("merchantAction");
@@ -384,6 +387,7 @@
             elementos[i].removeAttribute('disabled');
           }
           document.getElementById('description').innerHTML += '<br> Você encontrou um mercador. Compre algo ou vá embora.';
+          alterImage(locationStatus, 1, ocurrency);
         }
         //Verifica a localização, se terá um monstro ou outro personagem (curandeiro)
         //Vai ser de acordo com a localização, se é montaino, floresta, ilha ou planície
@@ -441,7 +445,7 @@
             hammer = true;
             break;
           case 'getAway':
-            alert('You Win!!');
+            alert('Você ganhou!! Você escapou da ilha misteriosa.');
             location.reload();
             break;
         }
@@ -487,7 +491,7 @@
               document.getElementById('description').innerHTML += '<br> Bônus de arma!!!';
             }
 
-            atack = atackTest(player.atack, foundMonster.defense, bonus);
+            let atack = atackTest(player.atack, foundMonster.defense, bonus);
             foundMonster.hp = foundMonster.hp - atack;
             document.getElementById('description').innerHTML += '<br> ataque do player:'+atack;
             document.getElementById('description').innerHTML += '<br> hp do monstro:'+foundMonster.hp;
@@ -504,9 +508,9 @@
             }
         }
 
-        atack = atackTest(foundMonster.atack, player.defense, 0);
-        player.hp = player.hp - atack;
-        document.getElementById('description').innerHTML += '<br> ataque do monstro:' + atack;
+        let atackMonster = atackTest(foundMonster.atack, player.defense, 0);
+        player.hp = player.hp - atackMonster;
+        document.getElementById('description').innerHTML += '<br> ataque do monstro:' + atackMonster;
         document.getElementById('description').innerHTML += '<br> hp do player:' + player.hp;
         turn = 'player';
         document.getElementById('life').innerHTML = player.hp;
@@ -565,8 +569,9 @@
       }
 
       function atackTest(atackForce, defenseForce, bonus) {
-        dice = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
+        let dice = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
 
+        let atack = 0;
         if ((dice + bonus) >=  defenseForce) {
           atack = (Math.floor(Math.random() * (6 - 1 + 1)) + 1) + bonus;
           atack = atack * atackForce;
