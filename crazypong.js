@@ -71,6 +71,27 @@ document.addEventListener('mousemove', (event) => {
     lineRight.style.top = newPosition + 'px';
 });
 
+// Touch handling for mobile: deslize vertical controla as linhas
+function handleTouchMove(event) {
+    // impedir scrolling da página enquanto controla o jogo
+    event.preventDefault();
+    if (!event.touches || event.touches.length === 0) return;
+    updateDimensions();
+    const rect = gameContainer.getBoundingClientRect();
+    const touchY = event.touches[0].clientY - rect.top;
+    let newPosition = touchY - lineHeight / 2;
+    if (newPosition < 0) newPosition = 0;
+    if (newPosition > containerHeight - lineHeight) newPosition = containerHeight - lineHeight;
+    linePositionRatio = newPosition / containerHeight;
+    lineLeft.style.top = newPosition + 'px';
+    lineRight.style.top = newPosition + 'px';
+}
+
+// Anexa os listeners de toque ao contêiner do jogo para disparar apenas dentro do jogo
+gameContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+// Também prevenimos o comportamento padrão de scroll em touchstart para evitar conflitos
+gameContainer.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+
 // Elementos e configurações iniciais
 let ballSpeed = 150; // px por segundo (variável para aumentar com colisões)
 
