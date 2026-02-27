@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crazy Pong</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            font-family: Arial, sans-serif;
+        }
+        
+        #gameContainer {
+                /* largura máxima original, mas encolhe em telas menores
+                        - horizontalmente será no máximo 800px, senão ficará 5px
+                            menor que a largura da tela (calc(100vw - 5px)).
+                        - altura ajusta proporcionalmente usando aspect-ratio (4:3).
+                */
+                width: min(800px, calc(100vw - 5px));
+                max-width: 800px;
+                aspect-ratio: 4 / 3;
+                height: auto;
+                border: 2px solid #fff;
+                background-color: #1a1a1a;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+        }
+        
+        .vertical-line {
+            width: 10px;
+            height: 80px;
+            background-color: #fff;
+            position: absolute;
+        }
+        
+        #line-left {
+            left: 10px;
+        }
+        
+        #line-right {
+            right: 10px;
+        }
+        
+        #ball {
+            width: 20px;
+            height: 20px;
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            pointer-events: none;
+        }
+        
+        #gameOverOverlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        #gameOverOverlay.show {
+            display: flex;
+        }
+        
+        #gameOverMessage {
+            font-size: 60px;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        #startButton {
+            padding: 15px 40px;
+            font-size: 24px;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        #startButton:hover {
+            background-color: #ccc;
+        }
+        
+        #statsContainer {
+            margin-top: 20px;
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            font-family: monospace;
+        }
+        
+        #stats {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+        }
+        
+        #pageTitle {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 48px;
+            letter-spacing: 2px;
+            text-align: center;
+            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1 id="pageTitle">Crazy Pong</h1>
+    <div id="gameContainer">
+        <div class="vertical-line" id="line-left"></div>
+        <div class="vertical-line" id="line-right"></div>
+        <div id="ball"></div>
+        <div id="gameOverOverlay">
+            <div id="gameOverMessage">GAME OVER</div>
+            <button id="startButton">Start</button>
+        </div>
+    </div>
+    <div id="statsContainer">
+        <div id="stats">
+            <div>Velocidade: <span id="speedValue">150</span> px/s</div>
+            <div>Rebatidas: <span id="bounceCount">0</span></div>
+        </div>
+    </div>
+    <script src="crazypong.js"></script>
+</body>
+</html>
