@@ -259,6 +259,8 @@ function endGame() {
     gameRunning = false;
     ball.style.display = 'none';
     gameOverOverlay.classList.add('show');
+    // exibe o botão de iniciar novamente após o fim do jogo
+    startButton.style.display = 'inline-block';
 }
 
 // Animation loop

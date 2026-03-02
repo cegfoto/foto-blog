@@ -100,6 +100,8 @@
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.3s;
+            /* inicialmente invisível; só aparece no Game Over */
+            display: none;
         }
         
         #startButton:hover {
@@ -140,13 +142,15 @@
         <div id="ball"></div>
         <div id="gameOverOverlay">
             <div id="gameOverMessage">GAME OVER</div>
-            <button id="startButton">Start</button>
         </div>
     </div>
     <div id="statsContainer">
         <div id="stats">
             <div>Velocidade: <span id="speedValue">150</span> px/s</div>
             <div>Rebatidas: <span id="bounceCount">0</span></div>
+        </div>
+        <div>
+            <button id="startButton">Start</button>
         </div>
     </div>
     <script src="crazypong.js"></script>
