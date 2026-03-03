@@ -110,7 +110,7 @@
             <button onclick="battleAction(event, this.id)" id="potion" class="w3-button w3-white">Poção</button>
           </div>
           <div id="merchant_actions">
-            <h3>Merchant Actions</h3>
+            <h3>Ações de Mercador</h3>
             <button disabled onclick="buyAction(event, this.id, 50)" id="buyPainKiller" class="w3-button w3-white merchantAction">Analgésico $50</button>
             <button disabled onclick="buyAction(event, this.id, 60)" id="buyPotion" class="w3-button w3-white merchantAction">Poção $60</button>
             <button disabled onclick="buyAction(event, this.id, 100)" id="buyTrident" class="w3-button w3-white merchantAction">Tridente $100</button>
@@ -197,6 +197,17 @@
       </div>
     </div>
 
+    <!-- Resultado da Ação Modal -->
+    <div id="actionResultModal" class="w3-modal">
+      <div class="w3-modal-content">
+        <div class="w3-container">
+          <span onclick="document.getElementById('actionResultModal').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+          <h1>Resultado da Ação</h1>
+          <p id="actionResultText"></p>
+        </div>
+      </div>
+    </div>
+
     <script>
       let position = [2,3];
       let battle = false;
@@ -209,6 +220,22 @@
       let hammer = false;
       let trident = false;
       let locationStatus = 'land';
+
+      // helper for showing action result modal
+      function showActionResult(text) {
+        const modal = document.getElementById('actionResultModal');
+        const textElem = document.getElementById('actionResultText');
+        textElem.innerHTML = text;
+        modal.style.display = 'block';
+        setTimeout(() => { modal.style.display = 'none'; }, 3000);
+      }
+
+      // centralized description update
+      function addDescription(text) {
+        document.getElementById('description').innerHTML += text;
+        showActionResult(text);
+        scrolDown();
+      }
 
       document.getElementById('initialAction').style.display='block';
       document.getElementById('prologue').style.display='block';
@@ -244,8 +271,7 @@
         }
 
         if (battle == true) {
-          document.getElementById('description').innerHTML += '<br> Não é possível andar durante a batalha.';
-          scrolDown();
+          addDescription('<br> Não é possível andar durante a batalha.');
           return;
         }
 
@@ -378,19 +404,19 @@
         // id da parte com imagem land_monster_image
         if (land.includes(position)) {
           locationStatus = 'land';
-          document.getElementById('description').innerHTML += '<br> Você está em uma planície.';
+          addDescription('<br> Você está em uma planície.');
           alterImage(locationStatus, 2);
         } else if (island.includes(position)) {
           locationStatus = 'island';
-          document.getElementById('description').innerHTML += '<br> Você está no litoral.';
+          addDescription('<br> Você está no litoral.');
           alterImage(locationStatus, 2);
         } else if (montain.includes(position)) {
           locationStatus = 'montain';
-          document.getElementById('description').innerHTML += '<br> Você está na montanha.';
+          addDescription('<br> Você está na montanha.');
           alterImage(locationStatus, 7);
         } else if (forest.includes(position)) {
           locationStatus = 'forest';
-          document.getElementById('description').innerHTML += '<br> Você está na floresta.';
+          addDescription('<br> Você está na floresta.');
           alterImage(locationStatus, 2);
         }
 
@@ -400,7 +426,7 @@
           battle = true;
           foundMonster = { ...monster };
           turn = 'player';
-          document.getElementById('description').innerHTML += '<br> Um monstro atacou. Tome uma ação de batalha.';
+          addDescription('<br> Um monstro atacou. Tome uma ação de batalha.');
           alterImage(locationStatus, 1, ocurrency);
         } else if (ocurrency == 'merchant') {
           buy = true;
@@ -409,7 +435,7 @@
           for (let i = 0; i < elementos.length; i++) {
             elementos[i].removeAttribute('disabled');
           }
-          document.getElementById('description').innerHTML += '<br> Você encontrou um mercador. Compre algo ou vá embora.';
+          addDescription('<br> Você encontrou um mercador. Compre algo ou vá embora.');
           alterImage(locationStatus, 1, ocurrency);
         }
         //Verifica a localização, se terá um monstro ou outro personagem (curandeiro)
@@ -432,14 +458,12 @@
 
       function buyAction(event, action, price) {
         if (!buy) {
-          document.getElementById('description').innerHTML += '<br> Não há um mercador presente.';
-          scrolDown();
+          addDescription('<br> Não há um mercador presente.');
           return;
         }
 
         if (coinNumber < price) { 
-          document.getElementById('description').innerHTML += '<br> Não tem dinheiro o suficiente, estranho.';
-          scrolDown();
+          addDescription('<br> Não tem dinheiro o suficiente, estranho.');
           return;
         }
 
@@ -476,8 +500,7 @@
 
       function battleAction(event, action) {
         if (!battle) {
-          document.getElementById('description').innerHTML += '<br> Você não está em batalha.';
-          scrolDown();
+          addDescription('<br> Você não está em batalha.');
           return;
         }
 
@@ -490,39 +513,39 @@
                 }
                 potionNumber --;
                 document.getElementById('potionStatus').innerHTML = potionNumber;
-                document.getElementById('description').innerHTML += '<br> hp player:' + player.hp;
+                addDescription('<br> hp player:' + player.hp);
               } else {
-                document.getElementById('description').innerHTML += '<br> Você não tem poção.';
+                addDescription('<br> Você não tem poção.');
               }
               break;
           case 'run':
             let running = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
             running = running + 75;
-            document.getElementById('description').innerHTML += '<br> Teste de corrida .'+running;
+            addDescription('<br> Teste de corrida .'+running);
             if (running > monster.hp) {
               battle = false;
               walk(null, runDespair());
               return;
             } else {
-              document.getElementById('description').innerHTML += '<br> O monstro te alcançou.';
+              addDescription('<br> O monstro te alcançou.');
             }
             break;
           default:
             let bonus = verifySpaceAndWeapon(action, locationStatus);
 
             if(bonus > 0) {
-              document.getElementById('description').innerHTML += '<br> Bônus de arma!!!';
+              addDescription('<br> Bônus de arma!!!');
             }
 
             let atack = atackTest(player.atack, foundMonster.defense, bonus);
             foundMonster.hp = foundMonster.hp - atack;
-            document.getElementById('description').innerHTML += '<br> ataque do player:'+atack;
-            document.getElementById('description').innerHTML += '<br> hp do monstro:'+foundMonster.hp;
+            addDescription('<br> ataque do player:'+atack);
+            addDescription('<br> hp do monstro:'+foundMonster.hp);
             turn = 'monster';
 
             if (foundMonster.hp <= 0) {
               battle = false;
-              document.getElementById('description').innerHTML += '<br> PLAYER VENCEU';
+              addDescription('<br> PLAYER VENCEU');
               scrolDown();
               coinNumber = coinNumber + 50;
               document.getElementById('coin').innerHTML = coinNumber;
@@ -533,14 +556,14 @@
 
         let atackMonster = atackTest(foundMonster.atack, player.defense, 0);
         player.hp = player.hp - atackMonster;
-        document.getElementById('description').innerHTML += '<br> ataque do monstro:' + atackMonster;
-        document.getElementById('description').innerHTML += '<br> hp do player:' + player.hp;
+        addDescription('<br> ataque do monstro:' + atackMonster);
+        addDescription('<br> hp do player:' + player.hp);
         turn = 'player';
         document.getElementById('life').innerHTML = player.hp;
 
         if (player.hp <= 0) {
           battle = false;
-          document.getElementById('description').innerHTML += '<br> GAME OVER, você perdeu metade do dinheiro';
+          addDescription('<br> GAME OVER, você perdeu metade do dinheiro');
           scrolDown();
           location.reload();
         }
