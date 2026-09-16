@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Página Preta</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: #000000;
+        overflow: hidden;
+      }
+
+      body {
+        position: relative;
+        min-height: 100vh;
+      }
+
+      .pixel-marker {
+        position: absolute;
+        bottom: 50px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 10px;
+        line-height: 1;
+        font-family: monospace;
+        white-space: nowrap;
+      }
+
+      .projectile {
+        position: fixed;
+        z-index: 1;
+        color: #ffffff;
+        font-size: 10px;
+        line-height: 1;
+        font-family: monospace;
+        pointer-events: none;
+        animation: projectile-rise 1.2s linear forwards;
+      }
+
+      @keyframes projectile-rise {
+        from {
+          transform: translateY(0);
+        }
+
+        to {
+          transform: translateY(-100vh);
+        }
+      }
+
+      .score-badge {
+        position: absolute;
+        bottom: 500px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #ffffff;
+        font-size: 18px;
+        font-family: monospace;
+        font-weight: bold;
+        line-height: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="score-badge">50</div>
+    <div class="pixel-marker">i--I--i</div>
+
+    <script>
+      const badge = document.querySelector('.score-badge');
+      const marker = document.querySelector('.pixel-marker');
+      let markerX = window.innerWidth / 2 - marker.offsetWidth / 2;
+
+      function updateMarkerPosition() {
+        marker.style.left = `${markerX}px`;
+      }
+
+      function respawnBadge() {
+        const maxLeft = window.innerWidth - badge.offsetWidth;
+        const randomLeft = Math.max(0, Math.random() * maxLeft);
+
+        badge.style.left = `${randomLeft}px`;
+        badge.style.transform = 'none';
+        badge.style.display = 'block';
+        badge.textContent = '50';
+
+        startCountdown(50);
+      }
+
+      function startCountdown(initialValue) {
+        let countdown = initialValue;
+        badge.textContent = countdown;
+
+        const countdownInterval = setInterval(() => {
+          if (countdown > 0) {
+            countdown -= 1;
+            badge.textContent = countdown;
+          } else {
+            clearInterval(countdownInterval);
+            badge.style.display = 'none';
+            setTimeout(respawnBadge, 500);
+          }
+        }, 1000);
+      }
+
+      function fireProjectiles() {
+        const markerRect = marker.getBoundingClientRect();
+        const projectileWidth = 8;
+        const positions = [
+          markerRect.left,
+          markerRect.right - projectileWidth
+        ];
+
+        positions.forEach((left) => {
+          const projectile = document.createElement('span');
+          projectile.className = 'projectile';
+          projectile.textContent = 'I';
+          projectile.style.left = `${left}px`;
+          projectile.style.top = `${markerRect.top}px`;
+          projectile.addEventListener('animationend', () => projectile.remove());
+          document.body.appendChild(projectile);
+        });
+      }
+
+      updateMarkerPosition();
+      startCountdown(50);
+
+      window.addEventListener('keydown', (event) => {
+        if (event.key === ' ') {
+          event.preventDefault();
+          if (!event.repeat) {
+            fireProjectiles();
+          }
+        }
+
+        if (event.key === 'ArrowLeft') {
+          const maxX = window.innerWidth - marker.offsetWidth;
+          markerX = Math.max(0, markerX - 10);
+          updateMarkerPosition();
+        }
+      });
+
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowRight') {
+          const maxX = window.innerWidth - marker.offsetWidth;
+          markerX = Math.min(maxX, markerX + 10);
+          updateMarkerPosition();
+        }
+      });
+    </script>
+  </body>
+</html>
