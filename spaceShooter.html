@@ -85,9 +85,8 @@
 
       .score-target {
         position: absolute;
-        bottom: 500px;
-        left: 50%;
-        transform: translateX(-50%);
+        top: 0;
+        left: 0;
         color: #ffffff;
         font-size: 18px;
         font-family: monospace;
@@ -107,6 +106,7 @@
       const badge = document.querySelector('.score-target');
       const scoreValue = document.querySelector('.score-value');
       const marker = document.querySelector('.pixel-marker');
+      const scorePanel = document.querySelector('.score-panel');
       let markerX = window.innerWidth / 2 - marker.offsetWidth / 2;
       let countdownInterval;
       let respawnTimeout;
@@ -118,12 +118,17 @@
       }
 
       function respawnBadge() {
-        const maxLeft = window.innerWidth - badge.offsetWidth;
+        const panelRect = scorePanel.getBoundingClientRect();
+        const markerRect = marker.getBoundingClientRect();
+        const maxLeft = Math.max(0, window.innerWidth - badge.offsetWidth);
+        const minTop = panelRect.bottom;
+        const maxTop = markerRect.top - badge.offsetHeight;
+        const randomTop = minTop + Math.random() * Math.max(0, maxTop - minTop);
         const randomLeft = Math.max(0, Math.random() * maxLeft);
 
         respawnTimeout = undefined;
         badge.style.left = `${randomLeft}px`;
-        badge.style.transform = 'none';
+        badge.style.top = `${randomTop}px`;
         badge.style.display = 'block';
         badge.textContent = '50';
 
@@ -208,7 +213,7 @@
       }
 
       updateMarkerPosition();
-      startCountdown(50);
+      respawnBadge();
 
       window.addEventListener('keydown', (event) => {
         if (event.key === ' ') {
