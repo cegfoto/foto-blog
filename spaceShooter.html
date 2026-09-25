@@ -24,21 +24,24 @@
       body {
         position: relative;
         min-height: 100vh;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.30)), url('spaceShooter/CidadeIsometrica.jpeg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: saturate(0.75);
       }
 
       .pixel-marker {
         position: absolute;
         bottom: 50px;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #ffffff;
-        font-size: 10px;
-        line-height: 1;
-        font-family: monospace;
-        white-space: nowrap;
+        width: 80px;
+        height: 80px;
+        display: block;
+        background-image: url('spaceShooter/nave.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        image-rendering: pixelated;
       }
 
       .projectile {
@@ -100,7 +103,7 @@
       <h3>score <span class="score-value">0</span></h3>
     </div>
     <div class="score-target">50</div>
-    <div class="pixel-marker">i--I--i</div>
+    <div class="pixel-marker" aria-label="Nave"></div>
 
     <script>
       const badge = document.querySelector('.score-target');
