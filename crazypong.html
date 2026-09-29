@@ -28,12 +28,15 @@
                             menor que a largura da tela (calc(100vw - 5px)).
                         - altura ajusta proporcionalmente usando aspect-ratio (4:3).
                 */
-                width: min(800px, calc(100vw - 5px));
-                max-width: 800px;
+                width: min(1100px, calc(100vw - 5px));
+                max-width: 1100px;
                 aspect-ratio: 4 / 3;
                 height: auto;
                 border: 2px solid #fff;
                 background-color: #1a1a1a;
+                background-image: url("spaceShooter/ringue.jpeg");
+                background-position: center;
+                background-size: cover;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -41,7 +44,7 @@
         }
         
         .vertical-line {
-            width: 10px;
+            width: 150px;
             height: 80px;
             background-color: #fff;
             position: absolute;
@@ -49,10 +52,22 @@
         
         #line-left {
             left: 10px;
+            width: 150px;
+            background-color: transparent;
+            background-image: url("CrazyPong/Ibere.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
         }
         
         #line-right {
             right: 10px;
+            width: 150px;
+            background-color: transparent;
+            background-image: url("CrazyPong/Ubirata.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
         }
         
         #ball {
