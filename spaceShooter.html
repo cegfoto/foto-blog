@@ -34,8 +34,8 @@
       .pixel-marker {
         position: absolute;
         bottom: 50px;
-        width: 80px;
-        height: 80px;
+        width: 160px;
+        height: 160px;
         display: block;
         background-image: url('spaceShooter/nave.png');
         background-size: contain;
@@ -47,10 +47,9 @@
       .projectile {
         position: fixed;
         z-index: 1;
-        color: #ffffff;
-        font-size: 10px;
-        line-height: 1;
-        font-family: monospace;
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
         pointer-events: none;
         animation: projectile-rise 1.2s linear forwards;
       }
@@ -201,16 +200,17 @@
 
       function fireProjectiles() {
         const markerRect = marker.getBoundingClientRect();
-        const projectileWidth = 8;
+        const projectileWidth = 32;
         const positions = [
           markerRect.left,
           markerRect.right - projectileWidth
         ];
 
         positions.forEach((left) => {
-          const projectile = document.createElement('span');
+          const projectile = document.createElement('img');
           projectile.className = 'projectile';
-          projectile.textContent = 'I';
+          projectile.src = 'spaceShooter/bola de agua.png';
+          projectile.alt = '';
           projectile.style.left = `${left}px`;
           projectile.style.top = `${markerRect.top}px`;
           projectile.addEventListener('animationend', () => {
