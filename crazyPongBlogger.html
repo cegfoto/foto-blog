@@ -1,0 +1,397 @@
+<!-- Crazy Pong para Blogger: cole este bloco no modo HTML da postagem. -->
+<div class="cp-blogger" data-crazy-pong>
+  <style>
+    .cp-blogger {
+      --cp-foreground: #fff;
+      width: 100%;
+      max-width: 800px;
+      margin: 1.5rem auto;
+      color: var(--cp-foreground);
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: center;
+    }
+
+    .cp-blogger *,
+    .cp-blogger *::before,
+    .cp-blogger *::after {
+      box-sizing: border-box;
+    }
+
+    .cp-blogger .cp-title {
+      margin: 0 0 0.75rem;
+      color: inherit;
+      font: 700 clamp(1.75rem, 7vw, 3rem)/1.15 "Segoe UI", Arial, sans-serif;
+      letter-spacing: 0.04em;
+    }
+
+    .cp-blogger .cp-game {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border: 2px solid #fff;
+      background: #1a1a1a;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      outline: none;
+    }
+
+    .cp-blogger .cp-game:focus-visible {
+      outline: 3px solid #72d6ff;
+      outline-offset: 3px;
+    }
+
+    .cp-blogger .cp-paddle,
+    .cp-blogger .cp-ball {
+      position: absolute;
+      background: #fff;
+      pointer-events: none;
+    }
+
+    .cp-blogger .cp-paddle {
+      top: 0;
+      width: 10px;
+      height: 80px;
+    }
+
+    .cp-blogger .cp-paddle-left { left: 10px; }
+    .cp-blogger .cp-paddle-right { right: 10px; }
+
+    .cp-blogger .cp-ball {
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+
+    .cp-blogger .cp-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgb(0 0 0 / 85%);
+    }
+
+    .cp-blogger .cp-overlay.is-visible { display: flex; }
+
+    .cp-blogger .cp-message {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(1.75rem, 8vw, 3.75rem);
+      font-weight: 700;
+    }
+
+    .cp-blogger .cp-start {
+      padding: 0.75rem 1.5rem;
+      border: 0;
+      border-radius: 0.3rem;
+      background: #fff;
+      color: #111;
+      font: 700 1.125rem Arial, sans-serif;
+      cursor: pointer;
+    }
+
+    .cp-blogger .cp-start:hover { background: #ddd; }
+    .cp-blogger .cp-start:focus-visible { outline: 3px solid #72d6ff; outline-offset: 3px; }
+
+    .cp-blogger .cp-stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem 2rem;
+      margin-top: 0.75rem;
+      color: inherit;
+      font: 1rem/1.5 monospace;
+    }
+
+    .cp-blogger .cp-help {
+      margin: 0.5rem 0 0;
+      color: inherit;
+      font-size: 0.875rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cp-blogger *, .cp-blogger *::before, .cp-blogger *::after { scroll-behavior: auto !important; }
+    }
+  </style>
+
+  <h2 class="cp-title">Crazy Pong</h2>
+  <div class="cp-game" tabindex="0" role="application" aria-label="Crazy Pong. Use as setas para cima e para baixo, ou mova o ponteiro dentro do jogo para controlar as barras.">
+    <div class="cp-paddle cp-paddle-left" aria-hidden="true"></div>
+    <div class="cp-paddle cp-paddle-right" aria-hidden="true"></div>
+    <div class="cp-ball" aria-hidden="true"></div>
+    <div class="cp-overlay" aria-hidden="true">
+      <p class="cp-message">GAME OVER</p>
+      <button class="cp-start" type="button">Jogar novamente</button>
+    </div>
+  </div>
+  <div class="cp-stats" aria-live="polite" aria-atomic="true">
+    <span>Velocidade: <span class="cp-speed">150</span> px/s</span>
+    <span>Rebatidas: <span class="cp-bounces">0</span></span>
+  </div>
+  <p class="cp-help">Controle com as setas ↑/↓ ou mova o mouse/toque dentro do jogo.</p>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // O escopo por componente evita variáveis globais e conflitos com o tema do Blogger.
+      var roots = document.querySelectorAll('[data-crazy-pong]');
+      Array.prototype.forEach.call(roots, function (root) {
+        if (root.getAttribute('data-cp-ready') === 'true') return;
+        root.setAttribute('data-cp-ready', 'true');
+
+        var game = root.querySelector('.cp-game');
+        var leftPaddle = root.querySelector('.cp-paddle-left');
+        var rightPaddle = root.querySelector('.cp-paddle-right');
+        var ballElement = root.querySelector('.cp-ball');
+        var overlay = root.querySelector('.cp-overlay');
+        var startButton = root.querySelector('.cp-start');
+        var speedValue = root.querySelector('.cp-speed');
+        var bounceValue = root.querySelector('.cp-bounces');
+
+        if (!game || !leftPaddle || !rightPaddle || !ballElement || !overlay || !startButton) return;
+
+        var REF_WIDTH = 800;
+        var REF_HEIGHT = 600;
+        var REF_PADDLE_HEIGHT = 80;
+        var REF_PADDLE_WIDTH = 10;
+        var REF_PADDLE_OFFSET = 10;
+        var REF_BALL_RADIUS = 10;
+        var MAX_SPEED = 900;
+        var paddleRatio = 260 / REF_HEIGHT;
+        var width = 0;
+        var height = 0;
+        var scale = 1;
+        var paddleHeight = 0;
+        var paddleWidth = 0;
+        var ballRadius = 0;
+        var leftX = 0;
+        var rightX = 0;
+        var ballX = 0;
+        var ballY = 0;
+        var velocityX = 0;
+        var velocityY = 0;
+        var ballSpeed = 150;
+        var bounces = 0;
+        var running = false;
+        var animationFrame = 0;
+        var lastTime = 0;
+        var resizeObserver = null;
+
+        function clamp(value, min, max) {
+          return Math.max(min, Math.min(max, value));
+        }
+
+        function renderPaddles() {
+          var y = clamp(paddleRatio * height, 0, Math.max(0, height - paddleHeight));
+          paddleRatio = height > 0 ? y / height : 0;
+          leftPaddle.style.top = y + 'px';
+          rightPaddle.style.top = y + 'px';
+        }
+
+        function updateDimensions() {
+          // clientWidth/clientHeight excluem a borda do jogo, alinhando as coordenadas dos elementos.
+          var nextWidth = game.clientWidth;
+          var nextHeight = game.clientHeight;
+          if (!nextWidth || !nextHeight) return;
+
+          width = nextWidth;
+          height = nextHeight;
+          scale = Math.min(width / REF_WIDTH, height / REF_HEIGHT);
+          paddleHeight = Math.min(height, REF_PADDLE_HEIGHT * scale);
+          paddleWidth = Math.min(width / 3, REF_PADDLE_WIDTH * scale);
+          ballRadius = Math.min(width / 6, height / 6, REF_BALL_RADIUS * scale);
+          leftX = Math.min(REF_PADDLE_OFFSET * scale, Math.max(0, width - paddleWidth));
+          rightX = Math.max(0, width - leftX - paddleWidth);
+
+          leftPaddle.style.width = paddleWidth + 'px';
+          leftPaddle.style.height = paddleHeight + 'px';
+          leftPaddle.style.left = leftX + 'px';
+          rightPaddle.style.width = paddleWidth + 'px';
+          rightPaddle.style.height = paddleHeight + 'px';
+          rightPaddle.style.right = leftX + 'px';
+          ballElement.style.width = (ballRadius * 2) + 'px';
+          ballElement.style.height = (ballRadius * 2) + 'px';
+
+          if (!ballX && !ballY) {
+            ballX = width / 2;
+            ballY = height / 2;
+          } else {
+            ballX = clamp(ballX, ballRadius, width - ballRadius);
+            ballY = clamp(ballY, ballRadius, height - ballRadius);
+          }
+          renderPaddles();
+          renderBall();
+        }
+
+        function renderBall() {
+          ballElement.style.transform = 'translate(' + (ballX - ballRadius) + 'px, ' + (ballY - ballRadius) + 'px)';
+        }
+
+        function setPaddleFromClientY(clientY) {
+          updateDimensions();
+          var rect = game.getBoundingClientRect();
+          var cssScaleY = rect.height > 0 ? height / rect.height : 1;
+          var y = (clientY - rect.top) * cssScaleY - paddleHeight / 2;
+          paddleRatio = clamp(y, 0, Math.max(0, height - paddleHeight)) / height;
+          renderPaddles();
+        }
+
+        function movePaddleBy(amount) {
+          updateDimensions();
+          var y = clamp(paddleRatio * height + amount * scale, 0, Math.max(0, height - paddleHeight));
+          paddleRatio = y / height;
+          renderPaddles();
+        }
+
+        function randomDirection() {
+          var angle = (Math.random() * 1.1 + 0.2) * (Math.random() < 0.5 ? 1 : -1);
+          velocityX = Math.cos(angle) * ballSpeed * (Math.random() < 0.5 ? -1 : 1);
+          velocityY = Math.sin(angle) * ballSpeed;
+        }
+
+        function increaseSpeed(amount) {
+          var current = Math.hypot(velocityX, velocityY);
+          var next = Math.min(MAX_SPEED, Math.max(ballSpeed, current) + amount);
+          if (current > 0) {
+            velocityX *= next / current;
+            velocityY *= next / current;
+          }
+          ballSpeed = next;
+          speedValue.textContent = String(Math.round(ballSpeed));
+        }
+
+        function paddleCollision(y) {
+          var paddleY = paddleRatio * height;
+          return y + ballRadius >= paddleY && y - ballRadius <= paddleY + paddleHeight;
+        }
+
+        function updateBall(deltaSeconds) {
+          updateDimensions();
+          var previousX = ballX;
+          ballX += velocityX * deltaSeconds;
+          ballY += velocityY * deltaSeconds;
+
+          if (ballY - ballRadius <= 0) {
+            ballY = ballRadius;
+            velocityY = Math.abs(velocityY);
+            increaseSpeed(10);
+          } else if (ballY + ballRadius >= height) {
+            ballY = height - ballRadius;
+            velocityY = -Math.abs(velocityY);
+            increaseSpeed(10);
+          }
+
+          if (velocityX < 0 && previousX - ballRadius >= leftX + paddleWidth && ballX - ballRadius <= leftX + paddleWidth) {
+            if (paddleCollision(ballY)) {
+              ballX = leftX + paddleWidth + ballRadius;
+              randomBounce('left');
+            }
+          } else if (velocityX > 0 && previousX + ballRadius <= rightX && ballX + ballRadius >= rightX) {
+            if (paddleCollision(ballY)) {
+              ballX = rightX - ballRadius;
+              randomBounce('right');
+            }
+          }
+
+          if (ballX + ballRadius < 0 || ballX - ballRadius > width) {
+            endGame();
+            return;
+          }
+          renderBall();
+        }
+
+        function randomBounce(side) {
+          // Direção sempre aponta para longe da barra atingida, sem uma trajetória quase vertical.
+          var angle = (0.18 + Math.random() * 1.05) * (Math.random() < 0.5 ? -1 : 1);
+          var direction = side === 'left' ? 1 : -1;
+          velocityX = Math.cos(angle) * ballSpeed * direction;
+          velocityY = Math.sin(angle) * ballSpeed;
+          increaseSpeed(25);
+          bounces += 1;
+          bounceValue.textContent = String(bounces);
+        }
+
+        function endGame() {
+          running = false;
+          if (animationFrame) window.cancelAnimationFrame(animationFrame);
+          animationFrame = 0;
+          ballElement.style.display = 'none';
+          overlay.classList.add('is-visible');
+          overlay.setAttribute('aria-hidden', 'false');
+          startButton.focus();
+        }
+
+        function loop(timestamp) {
+          if (!running) return;
+          if (!lastTime) lastTime = timestamp;
+          // Limita grandes saltos (aba/pausa) para evitar teletransporte e colisões perdidas.
+          var deltaSeconds = Math.min((timestamp - lastTime) / 1000, 0.05);
+          lastTime = timestamp;
+          updateBall(deltaSeconds);
+          if (running) animationFrame = window.requestAnimationFrame(loop);
+        }
+
+        function startGame() {
+          updateDimensions();
+          if (!width || !height) return;
+          if (animationFrame) window.cancelAnimationFrame(animationFrame);
+          bounces = 0;
+          ballSpeed = 150;
+          ballX = width / 2;
+          ballY = height / 2;
+          randomDirection();
+          bounceValue.textContent = '0';
+          speedValue.textContent = '150';
+          ballElement.style.display = 'block';
+          overlay.classList.remove('is-visible');
+          overlay.setAttribute('aria-hidden', 'true');
+          renderBall();
+          running = true;
+          lastTime = 0;
+          animationFrame = window.requestAnimationFrame(loop);
+          game.focus();
+        }
+
+        game.addEventListener('keydown', function (event) {
+          if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            event.preventDefault();
+            movePaddleBy(event.key === 'ArrowUp' ? -10 : 10);
+          }
+        });
+
+        game.addEventListener('pointermove', function (event) {
+          if (event.isPrimary !== false) setPaddleFromClientY(event.clientY);
+        });
+
+        startButton.addEventListener('click', startGame);
+        document.addEventListener('visibilitychange', function () {
+          if (document.hidden) {
+            if (animationFrame) window.cancelAnimationFrame(animationFrame);
+            animationFrame = 0;
+          } else if (running) {
+            lastTime = 0;
+            animationFrame = window.requestAnimationFrame(loop);
+          }
+        });
+
+        updateDimensions();
+        if (typeof ResizeObserver === 'function') {
+          resizeObserver = new ResizeObserver(updateDimensions);
+          resizeObserver.observe(game);
+        } else {
+          window.addEventListener('resize', updateDimensions);
+        }
+        startGame();
+      });
+    }());
+  </script>
+</div>
