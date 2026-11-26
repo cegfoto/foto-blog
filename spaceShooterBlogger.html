@@ -5,80 +5,174 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Space Shooter — Blogger</title>
   <style>
-    /* Jogo isolado para poder ser hospedado e incorporado em um post do Blogger. */
+    /* Visual baseado em spaceShooter.html, com dimensões contidas para o Blogger. */
     * { box-sizing: border-box; }
-    html, body { margin: 0; width: 100%; min-height: 100%; background: #080b16; }
-    body { font-family: system-ui, sans-serif; color: #fff; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #000;
+    }
+
+    body {
+      color: #fff;
+      font-family: system-ui, sans-serif;
+    }
+
     #space-shooter {
       position: relative;
-      width: 100%;
-      height: min(680px, 78vh);
-      min-height: 420px;
-      overflow: hidden;
       isolation: isolate;
-      background: #080b16 url('https://cegfoto.github.io/foto-blog/spaceShooter/CidadeIsometrica.jpeg') center / cover no-repeat;
+      width: 100%;
+      height: clamp(390px, 78vh, 680px);
+      min-height: 390px;
+      overflow: hidden;
+      background-color: #000;
+      background-image:
+        linear-gradient(rgba(0, 0, 0, .30), rgba(0, 0, 0, .30)),
+        url('https://cegfoto.github.io/foto-blog/spaceShooter/CidadeIsometrica.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: saturate(.75);
       touch-action: none;
       user-select: none;
       -webkit-user-select: none;
+      outline: none;
     }
-    #space-shooter::before {
-      content: ""; position: absolute; inset: 0; z-index: -1;
-      background: linear-gradient(rgba(0,0,0,.42), rgba(0,0,0,.25));
+
+    #space-shooter:focus-visible {
+      box-shadow: inset 0 0 0 2px #ffffff88;
     }
+
     .ss-score {
-      position: absolute; z-index: 3; top: 14px; left: 50%; transform: translateX(-50%);
-      padding: 8px 14px; border: 1px solid #ffffff55; border-radius: 999px;
-      background: #0009; color: #fff; font: 700 16px/1.2 monospace; white-space: nowrap;
+      position: absolute;
+      z-index: 4;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #fff;
+      font: 700 18px/1 monospace;
+      text-align: center;
+      white-space: nowrap;
+      text-shadow: 0 1px 4px #000;
     }
-    .ss-target {
-      position: absolute; z-index: 1; width: 82px; height: 100px;
-      display: grid; place-items: center; color: #fff; font: 700 17px monospace;
-      text-shadow: 0 1px 5px #000; background:
-        url('https://cegfoto.github.io/foto-blog/spaceShooter/Chama.png') center 45% / 260% auto no-repeat;
-    }
-    .ss-ship {
-      position: absolute; z-index: 2; bottom: 60px; left: 50%; width: 112px; height: 112px;
-      transform: translateX(-50%); background:
-        url('https://cegfoto.github.io/foto-blog/spaceShooter/nave.png') center / contain no-repeat;
-      image-rendering: pixelated; pointer-events: none;
-    }
-    .ss-projectile {
-      position: absolute; z-index: 2; width: 28px; height: 28px; object-fit: contain;
-      pointer-events: none; will-change: transform;
-    }
-    .ss-controls {
-      position: absolute; z-index: 4; left: 12px; right: 12px; bottom: 10px;
-      display: flex; justify-content: space-between; align-items: center; pointer-events: none;
-    }
-    .ss-controls button {
-      width: 54px; height: 48px; margin: 0 4px; border: 1px solid #ffffff88; border-radius: 12px;
-      color: #fff; background: #101729dd; font: 700 20px system-ui; touch-action: none;
-      pointer-events: auto; cursor: pointer;
-    }
-    .ss-controls button:active { background: #31517ddd; }
-    .ss-controls .ss-fire { width: auto; min-width: 90px; font-size: 15px; }
+
     .ss-help {
-      position: absolute; z-index: 3; top: 58px; left: 8px; right: 8px;
-      color: #fff; text-align: center; font: 12px/1.4 system-ui; text-shadow: 0 1px 4px #000;
+      position: absolute;
+      z-index: 4;
+      top: 48px;
+      left: 8px;
+      right: 8px;
+      color: #fff;
+      font: 12px/1.4 system-ui, sans-serif;
+      text-align: center;
+      text-shadow: 0 1px 4px #000;
       pointer-events: none;
     }
+
+    .ss-target {
+      position: absolute;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: clamp(72px, 16vw, 100px);
+      height: clamp(88px, 19vw, 120px);
+      color: transparent;
+      font: 700 18px/1 monospace;
+      background-image: url('https://cegfoto.github.io/foto-blog/spaceShooter/Chama.png');
+      background-position: center 45%;
+      background-repeat: no-repeat;
+      background-size: 260% auto;
+    }
+
+    .ss-ship {
+      position: absolute;
+      z-index: 3;
+      bottom: 66px;
+      left: 50%;
+      width: clamp(82px, 22vw, 160px);
+      aspect-ratio: 1;
+      transform: translateX(-50%);
+      background-image: url('https://cegfoto.github.io/foto-blog/spaceShooter/nave.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      image-rendering: pixelated;
+      pointer-events: none;
+    }
+
+    .ss-projectile {
+      position: absolute;
+      z-index: 3;
+      width: clamp(22px, 5vw, 32px);
+      height: clamp(22px, 5vw, 32px);
+      object-fit: contain;
+      pointer-events: none;
+      will-change: top;
+    }
+
+    .ss-controls {
+      position: absolute;
+      z-index: 5;
+      left: 10px;
+      right: 10px;
+      bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .ss-controls button {
+      width: 50px;
+      height: 44px;
+      margin: 0 3px;
+      border: 1px solid #ffffff99;
+      border-radius: 10px;
+      color: #fff;
+      background: #101729cc;
+      font: 700 19px system-ui, sans-serif;
+      touch-action: none;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .ss-controls button:active {
+      background: #31517ddd;
+    }
+
+    .ss-controls .ss-fire {
+      width: auto;
+      min-width: 82px;
+      padding: 0 10px;
+      font-size: 14px;
+    }
+
     @media (max-width: 480px) {
-      #space-shooter { height: min(620px, 78vh); min-height: 390px; }
-      .ss-ship { width: 90px; height: 90px; bottom: 58px; }
+      #space-shooter { height: clamp(390px, 76vh, 620px); }
+      .ss-help { font-size: 11px; }
+      .ss-controls { left: 5px; right: 5px; }
+      .ss-controls button { width: 44px; height: 42px; margin: 0 2px; }
+      .ss-controls .ss-fire { min-width: 76px; }
     }
   </style>
 </head>
 <body>
   <div id="space-shooter" tabindex="0" role="application" aria-label="Jogo Space Shooter">
-    <div class="ss-score">Pontos: <span class="ss-score-value">0</span></div>
+    <div class="ss-score">score <span class="ss-score-value">0</span></div>
     <div class="ss-help">Use ← → para mover e espaço para atirar. No celular, use os botões.</div>
-    <div class="ss-target" aria-label="Alvo">50</div>
+    <div class="ss-target" aria-label="Alvo"></div>
     <div class="ss-ship" aria-label="Nave"></div>
     <div class="ss-controls" aria-label="Controles do jogo">
-      <div><button type="button" class="ss-left" aria-label="Mover para a esquerda">◀</button><button type="button" class="ss-right" aria-label="Mover para a direita">▶</button></div>
+      <div>
+        <button type="button" class="ss-left" aria-label="Mover para a esquerda">◀</button>
+        <button type="button" class="ss-right" aria-label="Mover para a direita">▶</button>
+      </div>
       <button type="button" class="ss-fire">ATIRAR</button>
     </div>
   </div>
+
   <script>
     (() => {
       const game = document.getElementById('space-shooter');
@@ -87,37 +181,48 @@
       const scoreDisplay = game.querySelector('.ss-score-value');
       const shots = new Set();
       const keys = new Set();
+
       let shipX = 0;
       let score = 0;
       let countdown = 50;
       let countdownTimer;
       let respawnTimer;
       let lastFrame = 0;
+      let initialized = false;
       let firing = false;
 
-      const gameWidth = () => game.clientWidth;
-      const gameHeight = () => game.clientHeight;
-      const shipWidth = () => ship.getBoundingClientRect().width;
-      const shipTop = () => ship.offsetTop;
       function placeShip() {
-        shipX = Math.max(0, Math.min(gameWidth() - shipWidth(), shipX));
+        const maxX = Math.max(0, game.clientWidth - ship.offsetWidth);
+        shipX = Math.max(0, Math.min(maxX, shipX));
         ship.style.left = `${shipX}px`;
         ship.style.transform = 'none';
       }
+
+      function initializeShip() {
+        if (!initialized) {
+          shipX = (game.clientWidth - ship.offsetWidth) / 2;
+          initialized = true;
+        }
+        placeShip();
+      }
+
       function spawnTarget() {
         clearTimeout(respawnTimer);
-        const maxX = Math.max(0, gameWidth() - target.offsetWidth);
+        clearInterval(countdownTimer);
+
+        const maxX = Math.max(0, game.clientWidth - target.offsetWidth);
         const minY = 76;
-        const maxY = Math.max(minY, shipTop() - target.offsetHeight - 8);
+        const maxY = Math.max(minY, ship.offsetTop - target.offsetHeight - 8);
+
         target.style.left = `${Math.random() * maxX}px`;
         target.style.top = `${minY + Math.random() * (maxY - minY)}px`;
         target.style.display = 'grid';
+        target.textContent = '50';
         countdown = 50;
-        target.textContent = countdown;
-        clearInterval(countdownTimer);
+
         countdownTimer = setInterval(() => {
           countdown -= 1;
-          target.textContent = Math.max(0, countdown);
+          target.textContent = String(Math.max(0, countdown));
           if (countdown <= 0) {
             clearInterval(countdownTimer);
             target.style.display = 'none';
@@ -125,72 +230,120 @@
           }
         }, 1000);
       }
+
       function fire() {
         if (game.dataset.started !== 'true') return;
+
         const shipRect = ship.getBoundingClientRect();
         const gameRect = game.getBoundingClientRect();
-        [shipRect.left - gameRect.left + 10, shipRect.right - gameRect.left - 38].forEach((x) => {
+        const shotSize = Math.min(32, Math.max(22, game.clientWidth * .05));
+        const centers = [
+          shipRect.left - gameRect.left + shipRect.width * .25,
+          shipRect.left - gameRect.left + shipRect.width * .75
+        ];
+
+        centers.forEach((centerX) => {
           const shot = document.createElement('img');
           shot.className = 'ss-projectile';
           shot.src = 'https://cegfoto.github.io/foto-blog/spaceShooter/bola%20de%20agua.png';
           shot.alt = '';
-          shot.style.left = `${x}px`;
-          shot.style.top = `${shipTop()}px`;
+          shot.style.width = `${shotSize}px`;
+          shot.style.height = `${shotSize}px`;
+          shot.style.left = `${Math.max(0, Math.min(game.clientWidth - shotSize, centerX - shotSize / 2))}px`;
+          shot.style.top = `${ship.offsetTop + 4}px`;
           game.appendChild(shot);
           shots.add(shot);
         });
       }
+
       function overlaps(a, b) {
         return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
       }
+
+      function hitTarget() {
+        score += Math.max(0, countdown);
+        scoreDisplay.textContent = String(score);
+        clearInterval(countdownTimer);
+        target.style.display = 'none';
+        shots.forEach((shot) => shot.remove());
+        shots.clear();
+        respawnTimer = setTimeout(spawnTarget, 500);
+      }
+
       function frame(time) {
         const delta = Math.min((time - (lastFrame || time)) / 16.67, 2);
         lastFrame = time;
-        const move = (keys.has('ArrowRight') || keys.has('right') ? 1 : 0) - (keys.has('ArrowLeft') || keys.has('left') ? 1 : 0);
-        if (move) { shipX += move * 5 * delta; placeShip(); }
-        const gameRect = game.getBoundingClientRect();
+
+        const move =
+          (keys.has('ArrowRight') || keys.has('right') ? 1 : 0) -
+          (keys.has('ArrowLeft') || keys.has('left') ? 1 : 0);
+
+        if (move) {
+          shipX += move * 5 * delta;
+          placeShip();
+        }
+
         const targetRect = target.getBoundingClientRect();
         shots.forEach((shot) => {
           const y = parseFloat(shot.style.top) - 8 * delta;
           shot.style.top = `${y}px`;
+
           if (target.style.display !== 'none' && overlaps(shot.getBoundingClientRect(), targetRect)) {
-            score += Math.max(0, countdown);
-            scoreDisplay.textContent = score;
-            clearInterval(countdownTimer);
-            target.style.display = 'none';
-            shots.forEach((active) => active.remove());
-            shots.clear();
-            respawnTimer = setTimeout(spawnTarget, 500);
-          } else if (y < -32 || !game.contains(shot)) {
-            shots.delete(shot); shot.remove();
+            hitTarget();
+          } else if (y < -40 || !game.contains(shot)) {
+            shots.delete(shot);
+            shot.remove();
           }
         });
+
         requestAnimationFrame(frame);
       }
-      function start() {
-        game.dataset.started = 'true';
-        game.focus({ preventScroll: true });
-        placeShip();
-        spawnTarget();
-        requestAnimationFrame(frame);
-      }
+
       game.addEventListener('keydown', (event) => {
         if (['ArrowLeft', 'ArrowRight', ' '].includes(event.key)) event.preventDefault();
         keys.add(event.key);
         if (event.key === ' ' && !event.repeat) fire();
       });
+
       game.addEventListener('keyup', (event) => keys.delete(event.key));
       window.addEventListener('blur', () => keys.clear());
-      game.querySelector('.ss-left').addEventListener('pointerdown', (event) => { event.preventDefault(); keys.add('left'); });
-      game.querySelector('.ss-right').addEventListener('pointerdown', (event) => { event.preventDefault(); keys.add('right'); });
-      ['.ss-left', '.ss-right'].forEach((selector) => {
-        const button = game.querySelector(selector);
-        ['pointerup', 'pointercancel', 'pointerleave'].forEach((name) => button.addEventListener(name, () => keys.delete(selector === '.ss-left' ? 'left' : 'right')));
+
+      function bindMovement(button, direction) {
+        button.addEventListener('pointerdown', (event) => {
+          event.preventDefault();
+          button.setPointerCapture?.(event.pointerId);
+          keys.add(direction);
+        });
+        ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((name) => {
+          button.addEventListener(name, () => keys.delete(direction));
+        });
+      }
+
+      bindMovement(game.querySelector('.ss-left'), 'left');
+      bindMovement(game.querySelector('.ss-right'), 'right');
+
+      const fireButton = game.querySelector('.ss-fire');
+      fireButton.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+        fireButton.setPointerCapture?.(event.pointerId);
+        if (!firing) {
+          fire();
+          firing = true;
+        }
       });
-      game.querySelector('.ss-fire').addEventListener('pointerdown', (event) => { event.preventDefault(); if (!firing) { fire(); firing = true; } });
-      ['pointerup', 'pointercancel', 'pointerleave'].forEach((name) => game.querySelector('.ss-fire').addEventListener(name, () => { firing = false; }));
-      window.addEventListener('resize', placeShip);
-      start();
+      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((name) => {
+        fireButton.addEventListener(name, () => { firing = false; });
+      });
+
+      window.addEventListener('resize', () => {
+        initializeShip();
+        if (target.style.display !== 'none') spawnTarget();
+      });
+
+      game.dataset.started = 'true';
+      initializeShip();
+      spawnTarget();
+      requestAnimationFrame(frame);
     })();
   </script>
 </body>
