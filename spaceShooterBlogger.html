@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Space Shooter — Blogger</title>
+  <style>
+    /* Jogo isolado para poder ser hospedado e incorporado em um post do Blogger. */
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; min-height: 100%; background: #080b16; }
+    body { font-family: system-ui, sans-serif; color: #fff; }
+    #space-shooter {
+      position: relative;
+      width: 100%;
+      height: min(680px, 78vh);
+      min-height: 420px;
+      overflow: hidden;
+      isolation: isolate;
+      background: #080b16 url('https://cegfoto.github.io/foto-blog/spaceShooter/CidadeIsometrica.jpeg') center / cover no-repeat;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #space-shooter::before {
+      content: ""; position: absolute; inset: 0; z-index: -1;
+      background: linear-gradient(rgba(0,0,0,.42), rgba(0,0,0,.25));
+    }
+    .ss-score {
+      position: absolute; z-index: 3; top: 14px; left: 50%; transform: translateX(-50%);
+      padding: 8px 14px; border: 1px solid #ffffff55; border-radius: 999px;
+      background: #0009; color: #fff; font: 700 16px/1.2 monospace; white-space: nowrap;
+    }
+    .ss-target {
+      position: absolute; z-index: 1; width: 82px; height: 100px;
+      display: grid; place-items: center; color: #fff; font: 700 17px monospace;
+      text-shadow: 0 1px 5px #000; background:
+        url('https://cegfoto.github.io/foto-blog/spaceShooter/Chama.png') center 45% / 260% auto no-repeat;
+    }
+    .ss-ship {
+      position: absolute; z-index: 2; bottom: 60px; left: 50%; width: 112px; height: 112px;
+      transform: translateX(-50%); background:
+        url('https://cegfoto.github.io/foto-blog/spaceShooter/nave.png') center / contain no-repeat;
+      image-rendering: pixelated; pointer-events: none;
+    }
+    .ss-projectile {
+      position: absolute; z-index: 2; width: 28px; height: 28px; object-fit: contain;
+      pointer-events: none; will-change: transform;
+    }
+    .ss-controls {
+      position: absolute; z-index: 4; left: 12px; right: 12px; bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center; pointer-events: none;
+    }
+    .ss-controls button {
+      width: 54px; height: 48px; margin: 0 4px; border: 1px solid #ffffff88; border-radius: 12px;
+      color: #fff; background: #101729dd; font: 700 20px system-ui; touch-action: none;
+      pointer-events: auto; cursor: pointer;
+    }
+    .ss-controls button:active { background: #31517ddd; }
+    .ss-controls .ss-fire { width: auto; min-width: 90px; font-size: 15px; }
+    .ss-help {
+      position: absolute; z-index: 3; top: 58px; left: 8px; right: 8px;
+      color: #fff; text-align: center; font: 12px/1.4 system-ui; text-shadow: 0 1px 4px #000;
+      pointer-events: none;
+    }
+    @media (max-width: 480px) {
+      #space-shooter { height: min(620px, 78vh); min-height: 390px; }
+      .ss-ship { width: 90px; height: 90px; bottom: 58px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="space-shooter" tabindex="0" role="application" aria-label="Jogo Space Shooter">
+    <div class="ss-score">Pontos: <span class="ss-score-value">0</span></div>
+    <div class="ss-help">Use ← → para mover e espaço para atirar. No celular, use os botões.</div>
+    <div class="ss-target" aria-label="Alvo">50</div>
+    <div class="ss-ship" aria-label="Nave"></div>
+    <div class="ss-controls" aria-label="Controles do jogo">
+      <div><button type="button" class="ss-left" aria-label="Mover para a esquerda">◀</button><button type="button" class="ss-right" aria-label="Mover para a direita">▶</button></div>
+      <button type="button" class="ss-fire">ATIRAR</button>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const game = document.getElementById('space-shooter');
+      const ship = game.querySelector('.ss-ship');
+      const target = game.querySelector('.ss-target');
+      const scoreDisplay = game.querySelector('.ss-score-value');
+      const shots = new Set();
+      const keys = new Set();
+      let shipX = 0;
+      let score = 0;
+      let countdown = 50;
+      let countdownTimer;
+      let respawnTimer;
+      let lastFrame = 0;
+      let firing = false;
+
+      const gameWidth = () => game.clientWidth;
+      const gameHeight = () => game.clientHeight;
+      const shipWidth = () => ship.getBoundingClientRect().width;
+      const shipTop = () => ship.offsetTop;
+      function placeShip() {
+        shipX = Math.max(0, Math.min(gameWidth() - shipWidth(), shipX));
+        ship.style.left = `${shipX}px`;
+        ship.style.transform = 'none';
+      }
+      function spawnTarget() {
+        clearTimeout(respawnTimer);
+        const maxX = Math.max(0, gameWidth() - target.offsetWidth);
+        const minY = 76;
+        const maxY = Math.max(minY, shipTop() - target.offsetHeight - 8);
+        target.style.left = `${Math.random() * maxX}px`;
+        target.style.top = `${minY + Math.random() * (maxY - minY)}px`;
+        target.style.display = 'grid';
+        countdown = 50;
+        target.textContent = countdown;
+        clearInterval(countdownTimer);
+        countdownTimer = setInterval(() => {
+          countdown -= 1;
+          target.textContent = Math.max(0, countdown);
+          if (countdown <= 0) {
+            clearInterval(countdownTimer);
+            target.style.display = 'none';
+            respawnTimer = setTimeout(spawnTarget, 500);
+          }
+        }, 1000);
+      }
+      function fire() {
+        if (game.dataset.started !== 'true') return;
+        const shipRect = ship.getBoundingClientRect();
+        const gameRect = game.getBoundingClientRect();
+        [shipRect.left - gameRect.left + 10, shipRect.right - gameRect.left - 38].forEach((x) => {
+          const shot = document.createElement('img');
+          shot.className = 'ss-projectile';
+          shot.src = 'https://cegfoto.github.io/foto-blog/spaceShooter/bola%20de%20agua.png';
+          shot.alt = '';
+          shot.style.left = `${x}px`;
+          shot.style.top = `${shipTop()}px`;
+          game.appendChild(shot);
+          shots.add(shot);
+        });
+      }
+      function overlaps(a, b) {
+        return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+      }
+      function frame(time) {
+        const delta = Math.min((time - (lastFrame || time)) / 16.67, 2);
+        lastFrame = time;
+        const move = (keys.has('ArrowRight') || keys.has('right') ? 1 : 0) - (keys.has('ArrowLeft') || keys.has('left') ? 1 : 0);
+        if (move) { shipX += move * 5 * delta; placeShip(); }
+        const gameRect = game.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        shots.forEach((shot) => {
+          const y = parseFloat(shot.style.top) - 8 * delta;
+          shot.style.top = `${y}px`;
+          if (target.style.display !== 'none' && overlaps(shot.getBoundingClientRect(), targetRect)) {
+            score += Math.max(0, countdown);
+            scoreDisplay.textContent = score;
+            clearInterval(countdownTimer);
+            target.style.display = 'none';
+            shots.forEach((active) => active.remove());
+            shots.clear();
+            respawnTimer = setTimeout(spawnTarget, 500);
+          } else if (y < -32 || !game.contains(shot)) {
+            shots.delete(shot); shot.remove();
+          }
+        });
+        requestAnimationFrame(frame);
+      }
+      function start() {
+        game.dataset.started = 'true';
+        game.focus({ preventScroll: true });
+        placeShip();
+        spawnTarget();
+        requestAnimationFrame(frame);
+      }
+      game.addEventListener('keydown', (event) => {
+        if (['ArrowLeft', 'ArrowRight', ' '].includes(event.key)) event.preventDefault();
+        keys.add(event.key);
+        if (event.key === ' ' && !event.repeat) fire();
+      });
+      game.addEventListener('keyup', (event) => keys.delete(event.key));
+      window.addEventListener('blur', () => keys.clear());
+      game.querySelector('.ss-left').addEventListener('pointerdown', (event) => { event.preventDefault(); keys.add('left'); });
+      game.querySelector('.ss-right').addEventListener('pointerdown', (event) => { event.preventDefault(); keys.add('right'); });
+      ['.ss-left', '.ss-right'].forEach((selector) => {
+        const button = game.querySelector(selector);
+        ['pointerup', 'pointercancel', 'pointerleave'].forEach((name) => button.addEventListener(name, () => keys.delete(selector === '.ss-left' ? 'left' : 'right')));
+      });
+      game.querySelector('.ss-fire').addEventListener('pointerdown', (event) => { event.preventDefault(); if (!firing) { fire(); firing = true; } });
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach((name) => game.querySelector('.ss-fire').addEventListener(name, () => { firing = false; }));
+      window.addEventListener('resize', placeShip);
+      start();
+    })();
+  </script>
+</body>
+</html>
